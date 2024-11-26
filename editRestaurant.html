@@ -39,13 +39,7 @@
       font-size: 1.5rem;
       margin-bottom: 10px;
     }
-    .section p {
-      font-size: 0.9rem;
-      color: #666;
-      margin-bottom: 20px;
-    }
-    .section button, .section input, .section select {
-      display: block;
+    .section textarea, .section select, .section input {
       width: 100%;
       padding: 10px;
       margin: 10px 0;
@@ -54,18 +48,25 @@
       font-size: 1rem;
     }
     .section button {
+      display: inline-block;
       background-color: #007BFF;
       color: #fff;
       border: none;
+      padding: 10px 20px;
+      font-size: 1rem;
+      border-radius: 5px;
       cursor: pointer;
     }
     .section button:hover {
       background-color: #0056b3;
     }
-    .table-section input {
-      width: calc(50% - 10px);
-      display: inline-block;
-      margin: 5px;
+    .time-select {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .time-select select {
+      flex: 1;
     }
     .publish-btn {
       text-align: center;
@@ -83,6 +84,22 @@
     .publish-btn button:hover {
       background-color: #218838;
     }
+    .activate-btn {
+      text-align: center;
+      margin-top: 30px;
+    }
+    .activate-btn button {
+      background-color: #28a745;
+      color: white;
+      font-size: 1.2rem;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .activate-btn button:hover {
+      background-color: #218838;
+    }
   </style>
 </head>
 <body>
@@ -93,47 +110,205 @@
     </div>
     <div class="section">
       <h2>Description of Restaurant</h2>
-      <p>Body text for whatever you'd like to say. Add main takeaway points, quotes, anecdotes, or even a very very short story.</p>
+      <textarea placeholder="Enter a description of the restaurant..."></textarea>
       <button>Save</button>
     </div>
     <div class="section">
       <h2>Location</h2>
-      <p>Body text for whatever you'd like to say. Add main takeaway points, quotes, anecdotes, or even a very very short story.</p>
+      <textarea placeholder="Enter the restaurant location..."></textarea>
       <button>Save</button>
     </div>
     <div class="section">
       <h2>Menu</h2>
-      <p>Body text for whatever you'd like to say. Add main takeaway points, quotes, anecdotes, or even a very very short story.</p>
+      <textarea placeholder="Enter menu details..."></textarea>
       <button>Save</button>
     </div>
     <div class="section">
       <h2>Hours of Operation</h2>
-      <p>When can a guest make a reservation?</p>
-      <select>
-        <option>Monday</option>
-        <option>Tuesday</option>
-        <option>Wednesday</option>
-        <option>Thursday</option>
-        <option>Friday</option>
-        <option>Saturday</option>
-        <option>Sunday</option>
-      </select>
+      <p>Select opening and closing times for each day:</p>
+      <div class="time-select">
+        <label>Monday:</label>
+        <select>
+          <option value="">Opening Time</option>
+          <option>6:00 AM</option>
+          <option>7:00 AM</option>
+          <option>8:00 AM</option>
+          <option>9:00 AM</option>
+          <option>10:00 AM</option>
+          <option>11:00 AM</option>
+          <option>12:00 PM</option>
+        </select>
+        <select>
+          <option value="">Closing Time</option>
+          <option>6:00 PM</option>
+          <option>7:00 PM</option>
+          <option>8:00 PM</option>
+          <option>9:00 PM</option>
+          <option>10:00 PM</option>
+          <option>11:00 PM</option>
+          <option>12:00 AM</option>
+        </select>
+      </div>
+      <div class="time-select">
+        <label>Tuesday:</label>
+        <select>
+          <option value="">Opening Time</option>
+          <option>6:00 AM</option>
+          <option>7:00 AM</option>
+          <option>8:00 AM</option>
+          <option>9:00 AM</option>
+          <option>10:00 AM</option>
+          <option>11:00 AM</option>
+          <option>12:00 PM</option>
+        </select>
+        <select>
+          <option value="">Closing Time</option>
+          <option>6:00 PM</option>
+          <option>7:00 PM</option>
+          <option>8:00 PM</option>
+          <option>9:00 PM</option>
+          <option>10:00 PM</option>
+          <option>11:00 PM</option>
+          <option>12:00 AM</option>
+        </select>
+      </div>
+      <div class="time-select">
+        <label>Wednesday:</label>
+        <select>
+          <option value="">Opening Time</option>
+          <option>6:00 AM</option>
+          <option>7:00 AM</option>
+          <option>8:00 AM</option>
+          <option>9:00 AM</option>
+          <option>10:00 AM</option>
+          <option>11:00 AM</option>
+          <option>12:00 PM</option>
+        </select>
+        <select>
+          <option value="">Closing Time</option>
+          <option>6:00 PM</option>
+          <option>7:00 PM</option>
+          <option>8:00 PM</option>
+          <option>9:00 PM</option>
+          <option>10:00 PM</option>
+          <option>11:00 PM</option>
+          <option>12:00 AM</option>
+        </select>
+      </div>
+      <div class="time-select">
+        <label>Thursday:</label>
+        <select>
+          <option value="">Opening Time</option>
+          <option>6:00 AM</option>
+          <option>7:00 AM</option>
+          <option>8:00 AM</option>
+          <option>9:00 AM</option>
+          <option>10:00 AM</option>
+          <option>11:00 AM</option>
+          <option>12:00 PM</option>
+        </select>
+        <select>
+          <option value="">Closing Time</option>
+          <option>6:00 PM</option>
+          <option>7:00 PM</option>
+          <option>8:00 PM</option>
+          <option>9:00 PM</option>
+          <option>10:00 PM</option>
+          <option>11:00 PM</option>
+          <option>12:00 AM</option>
+        </select>
+      </div>
+      <div class="time-select">
+        <label>Friday:</label>
+        <select>
+          <option value="">Opening Time</option>
+          <option>6:00 AM</option>
+          <option>7:00 AM</option>
+          <option>8:00 AM</option>
+          <option>9:00 AM</option>
+          <option>10:00 AM</option>
+          <option>11:00 AM</option>
+          <option>12:00 PM</option>
+        </select>
+        <select>
+          <option value="">Closing Time</option>
+          <option>6:00 PM</option>
+          <option>7:00 PM</option>
+          <option>8:00 PM</option>
+          <option>9:00 PM</option>
+          <option>10:00 PM</option>
+          <option>11:00 PM</option>
+          <option>12:00 AM</option>
+        </select>
+      </div>
+      <div class="time-select">
+        <label>Saturday:</label>
+        <select>
+          <option value="">Opening Time</option>
+          <option>6:00 AM</option>
+          <option>7:00 AM</option>
+          <option>8:00 AM</option>
+          <option>9:00 AM</option>
+          <option>10:00 AM</option>
+          <option>11:00 AM</option>
+          <option>12:00 PM</option>
+        </select>
+        <select>
+          <option value="">Closing Time</option>
+          <option>6:00 PM</option>
+          <option>7:00 PM</option>
+          <option>8:00 PM</option>
+          <option>9:00 PM</option>
+          <option>10:00 PM</option>
+          <option>11:00 PM</option>
+          <option>12:00 AM</option>
+        </select>
+      </div>
+      <div class="time-select">
+        <label>Sunday:</label>
+        <select>
+          <option value="">Opening Time</option>
+          <option>6:00 AM</option>
+          <option>7:00 AM</option>
+          <option>8:00 AM</option>
+          <option>9:00 AM</option>
+          <option>10:00 AM</option>
+          <option>11:00 AM</option>
+          <option>12:00 PM</option>
+        </select>
+        <select>
+          <option value="">Closing Time</option>
+          <option>6:00 PM</option>
+          <option>7:00 PM</option>
+          <option>8:00 PM</option>
+          <option>9:00 PM</option>
+          <option>10:00 PM</option>
+          <option>11:00 PM</option>
+          <option>12:00 AM</option>
+        </select>
+      </div>
+      <!-- Repeat for Wednesday-Sunday -->
       <button>Save</button>
     </div>
     <div class="section">
       <h2>Maximum Number of Guests</h2>
-      <p>Body text for whatever you'd like to say. Add main takeaway points, quotes, anecdotes, or even a very very short story.</p>
+      <input type="number" placeholder="Enter maximum number of guests">
       <button>Save</button>
     </div>
-    <div class="section table-section">
+    <div class="section">
       <h2>Number of Tables</h2>
-      <p>Body text for whatever you'd like to say. Add main takeaway points, quotes, anecdotes, or even a very very short story.</p>
-      <input type="text" placeholder="Table name">
-      <input type="number" placeholder="Number of guests this table can seat">
+      <div>
+        <input type="text" placeholder="Table name">
+        <input type="number" placeholder="Number of guests this table can seat">
+      </div>
       <button>Add Table</button>
     </div>
+    
     <div class="publish-btn">
       <button>Publish Restaurant</button>
+    </div>
+    <div class="activate-btn">
+      <button>Activate Restaurant</button>
     </div>
   </div>
 </body>
