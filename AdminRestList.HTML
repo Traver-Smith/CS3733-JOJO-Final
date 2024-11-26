@@ -27,12 +27,16 @@
         }
         .restaurant {
             display: flex;
-            align-items: center;
+            flex-direction: column;
             border: 1px solid #ddd;
             border-radius: 8px;
             margin-bottom: 15px;
             padding: 10px;
             background-color: #fdfdfd;
+        }
+        .restaurant-header {
+            display: flex;
+            align-items: center;
         }
         .restaurant img {
             width: 50px;
@@ -42,10 +46,26 @@
             background-color: #eee;
         }
         .restaurant h3 {
-            flex-grow: 1;
             margin: 0;
+            flex-grow: 1;
         }
-        .restaurant .actions {
+        .status {
+            font-size: 14px;
+            margin-top: 5px;
+            color: grey;
+        }
+        .status .active {
+            color: green;
+        }
+        .status .inactive {
+            color: red;
+        }
+        .restaurant .address {
+            font-size: 14px;
+            color: #555;
+            margin: 10px 0;
+        }
+        .actions {
             display: flex;
             gap: 10px;
         }
@@ -79,8 +99,12 @@
     <div class="container">
         <!-- Restaurant #1 -->
         <div class="restaurant">
-            <img src="placeholder.png" alt="Restaurant Image">
-            <h3>Restaurant #1</h3>
+            <div class="restaurant-header">
+                <img src="placeholder.png" alt="Restaurant Image">
+                <h3>Restaurant #1</h3>
+            </div>
+            <p class="status">Status: <span class="active">Active</span></p>
+            <p class="address">Address: 123 Main St, City, State</p>
             <div class="actions">
                 <button class="view-button" onclick="viewRestaurant(1)">View Restaurant</button>
                 <button class="delete-button" onclick="deleteRestaurant(1)">Delete Restaurant</button>
@@ -88,8 +112,12 @@
         </div>
         <!-- Restaurant #2 -->
         <div class="restaurant">
-            <img src="placeholder.png" alt="Restaurant Image">
-            <h3>Restaurant #2</h3>
+            <div class="restaurant-header">
+                <img src="placeholder.png" alt="Restaurant Image">
+                <h3>Restaurant #2</h3>
+            </div>
+            <p class="status">Status: <span class="inactive">Inactive</span></p>
+            <p class="address">Address: 456 Elm St, City, State</p>
             <div class="actions">
                 <button class="view-button" onclick="viewRestaurant(2)">View Restaurant</button>
                 <button class="delete-button" onclick="deleteRestaurant(2)">Delete Restaurant</button>
@@ -97,14 +125,18 @@
         </div>
         <!-- Restaurant #3 -->
         <div class="restaurant">
-            <img src="placeholder.png" alt="Restaurant Image">
-            <h3>Restaurant #3</h3>
+            <div class="restaurant-header">
+                <img src="placeholder.png" alt="Restaurant Image">
+                <h3>Restaurant #3</h3>
+            </div>
+            <p class="status">Status: <span class="active">Active</span></p>
+            <p class="address">Address: 789 Oak St, City, State</p>
             <div class="actions">
                 <button class="view-button" onclick="viewRestaurant(3)">View Restaurant</button>
                 <button class="delete-button" onclick="deleteRestaurant(3)">Delete Restaurant</button>
             </div>
         </div>
-        <!-- Add more restaurants as needed -->
+        <!-- Add more restaurants dynamically as needed -->
     </div>
 
     <script>
