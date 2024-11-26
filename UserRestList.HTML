@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List of Restaurants</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .filter {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .filter label {
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        .filter input, .filter select {
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .restaurant {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #fdfdfd;
+        }
+        .restaurant img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            background-color: #eee;
+        }
+        .restaurant h3 {
+            flex-grow: 1;
+            margin: 0;
+        }
+        .restaurant button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+        .restaurant button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>List of Restaurants</h1>
+    </header>
+    <div class="container">
+        <div class="filter">
+            <label for="filter-date">Select Date:</label>
+            <input type="date" id="filter-date" min="2024-11-26">
+            
+            <label for="filter-time">Select Time:</label>
+            <select id="filter-time">
+                <!-- JavaScript will populate these options dynamically -->
+            </select>
+            <button onclick="filterRestaurants()">Filter</button>
+        </div>
+        <!-- Restaurant #1 -->
+        <div class="restaurant">
+            <img src="placeholder.png" alt="Restaurant Image">
+            <h3>Restaurant #1</h3>
+            <button onclick="viewReservations(1)">View Reservations</button>
+        </div>
+        <!-- Restaurant #2 -->
+        <div class="restaurant">
+            <img src="placeholder.png" alt="Restaurant Image">
+            <h3>Restaurant #2</h3>
+            <button onclick="viewReservations(2)">View Reservations</button>
+        </div>
+        <!-- Restaurant #3 -->
+        <div class="restaurant">
+            <img src="placeholder.png" alt="Restaurant Image">
+            <h3>Restaurant #3</h3>
+            <button onclick="viewReservations(3)">View Reservations</button>
+        </div>
+        <!-- Add more restaurants dynamically as needed -->
+    </div>
+
+    <script>
+        // Populate the time dropdown with 30-minute intervals
+        function populateTimeDropdown() {
+            const timeSelect = document.getElementById('filter-time');
+            const intervals = 48; // 24 hours * 2 (30-minute intervals)
+            let time = new Date();
+            time.setHours(0, 0, 0, 0); // Start at midnight
+
+            for (let i = 0; i < intervals; i++) {
+                const hours = time.getHours().toString().padStart(2, '0');
+                const minutes = time.getMinutes().toString().padStart(2, '0');
+                const option = document.createElement('option');
+                option.value = `${hours}:${minutes}`;
+                option.textContent = `${hours}:${minutes}`;
+                timeSelect.appendChild(option);
+
+                // Increment by 30 minutes
+                time.setMinutes(time.getMinutes() + 30);
+            }
+        }
+
+        // Filter restaurants based on selected date and time
+        function filterRestaurants() {
+            const selectedDate = document.getElementById('filter-date').value;
+            const selectedTime = document.getElementById('filter-time').value;
+
+            if (!selectedDate) {
+                alert('Please select a date.');
+                return;
+            }
+
+            if (!selectedTime) {
+                alert('Please select a time.');
+                return;
+            }
+
+            alert(`Filtering restaurants for ${selectedDate} at ${selectedTime}`);
+            // Add logic to fetch and filter restaurants based on the selected date and time
+        }
+
+        // View reservations for a restaurant
+        function viewReservations(id) {
+            alert(`Viewing reservations for Restaurant #${id}`);
+            // Add logic to fetch and display reservations for the selected restaurant
+        }
+
+        // Populate the time dropdown on page load
+        document.addEventListener('DOMContentLoaded', populateTimeDropdown);
+    </script>
+</body>
+</html>

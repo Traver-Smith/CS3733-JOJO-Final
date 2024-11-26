@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 5px;
+        }
+        input {
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .secondary-button {
+            margin-top: 10px;
+            background-color: #28a745;
+        }
+        .secondary-button:hover {
+            background-color: #218838;
+        }
+        .error {
+            color: #dc3545;
+            font-size: 14px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Restaurant Login</h1>
+    </header>
+    <div class="container">
+        <h1>Restaruant Owner Login</h1>
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="error" id="error"></div>
+            <label for="username">Restaurant Username</label>
+            <input type="text" id="username" placeholder="Enter your restaurant username" required>
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter your password" required>
+            <button type="submit">Login</button>
+            <button type="button" class="secondary-button" onclick="createRestaurant()">Create Restaurant</button>
+        </form>
+    </div>
+
+    <script>
+        function handleLogin(event) {
+            event.preventDefault(); // Prevent the form from submitting
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Mock validation (replace with actual backend authentication)
+            if (username === 'restaurant123' && password === 'password') {
+                alert('Login successful!');
+                window.location.href = '/restaurant/dashboard'; // Redirect to the restaurant dashboard
+            } else {
+                const errorDiv = document.getElementById('error');
+                errorDiv.textContent = 'Invalid username or password.';
+            }
+        }
+
+        function createRestaurant() {
+            alert('Redirecting to Create Restaurant page...');
+            window.location.href = '/restaurant/create'; // Redirect to the create restaurant page
+        }
+    </script>
+</body>
+</html>
