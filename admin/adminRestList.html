@@ -72,13 +72,6 @@
             display: flex;
             align-items: center;
         }
-        .restaurant img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            margin-right: 15px;
-            background-color: #eee;
-        }
         .restaurant h3 {
             margin: 0;
             flex-grow: 1;
@@ -140,79 +133,76 @@
             <button onclick="restaurantLogin()">Restaurant Login</button>
         </div>
     </header>
-    <div class="container">
-        <!-- Restaurant #1 -->
-        <div class="restaurant">
-            <div class="restaurant-header">
-                <img src="placeholder.png" alt="Restaurant Image">
-                <h3>Restaurant #1</h3>
-            </div>
-            <p class="status">Status: <span class="active">Active</span></p>
-            <p class="address">Address: 123 Main St, City, State</p>
-            <div class="actions">
-                <button class="view-button" onclick="viewRestaurant(1)">View Restaurant</button>
-                <button class="delete-button" onclick="deleteRestaurant(1)">Delete Restaurant</button>
-            </div>
-        </div>
-        <!-- Restaurant #2 -->
-        <div class="restaurant">
-            <div class="restaurant-header">
-                <img src="placeholder.png" alt="Restaurant Image">
-                <h3>Restaurant #2</h3>
-            </div>
-            <p class="status">Status: <span class="inactive">Inactive</span></p>
-            <p class="address">Address: 456 Elm St, City, State</p>
-            <div class="actions">
-                <button class="view-button" onclick="viewRestaurant(2)">View Restaurant</button>
-                <button class="delete-button" onclick="deleteRestaurant(2)">Delete Restaurant</button>
-            </div>
-        </div>
-        <!-- Restaurant #3 -->
-        <div class="restaurant">
-            <div class="restaurant-header">
-                <img src="placeholder.png" alt="Restaurant Image">
-                <h3>Restaurant #3</h3>
-            </div>
-            <p class="status">Status: <span class="active">Active</span></p>
-            <p class="address">Address: 789 Oak St, City, State</p>
-            <div class="actions">
-                <button class="view-button" onclick="viewRestaurant(3)">View Restaurant</button>
-                <button class="delete-button" onclick="deleteRestaurant(3)">Delete Restaurant</button>
-            </div>
-        </div>
-        <!-- Add more restaurants dynamically as needed -->
+    <div class="container" id="restaurant-container">
+        <!-- Restaurants will be dynamically added here -->
     </div>
 
     <script>
+        const apiEndpoint = 'https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage1/AdministratorList';
+
+        // Fetch restaurants and populate the page
+        async function fetchRestaurants() {
+            try {
+                const response = await fetch(apiEndpoint);
+                const data = await response.json();
+                const restaurants = JSON.parse(data.body).data;
+                renderRestaurants(restaurants);
+            } catch (error) {
+                console.error('Error fetching restaurants:', error);
+            }
+        }
+
+        // Render restaurants dynamically
+        function renderRestaurants(restaurants) {
+            const container = document.getElementById('restaurant-container');
+            container.innerHTML = ''; // Clear existing content
+
+            restaurants.forEach((restaurant, index) => {
+                const isActive = restaurant.isActive === 1 ? 'active' : 'inactive';
+                const statusColor = restaurant.isActive === 1 ? 'green' : 'red';
+
+                const restaurantCard = `
+                    <div class="restaurant">
+                        <div class="restaurant-header">
+                            <h3>${restaurant.restaurantName}</h3>
+                        </div>
+                        <p class="status">Status: <span class="${isActive}">${isActive === 'active' ? 'Active' : 'Inactive'}</span></p>
+                        <p class="address">Address: ${restaurant.Address}</p>
+                        <div class="actions">
+                            <button class="view-button" onclick="viewRestaurant(${index})">View Restaurant</button>
+                            <button class="delete-button" onclick="deleteRestaurant(${index}, '${restaurant.restaurantName}')">Delete Restaurant</button>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += restaurantCard;
+            });
+        }
+
+        // Handle delete button click
+        async function deleteRestaurant(index, name) {
+            const confirmation = confirm(`Are you sure you want to delete ${name}?`);
+            if (confirmation) {
+                alert(`Delete API for Restaurant ${index} is not yet implemented.`);
+                // Example DELETE request here
+                // await fetch(`https://api.example.com/restaurants/${id}`, { method: 'DELETE' });
+            }
+        }
+
+        // Dummy functions for navigation
         function makeReservation() {
             alert('Redirecting to Make a Reservation page...');
-            window.location.href = '/make-reservation';
         }
 
         function adminLogin() {
             alert('Redirecting to Admin Login page...');
-            window.location.href = '/admin/login';
         }
 
         function restaurantLogin() {
             alert('Redirecting to Restaurant Login page...');
-            window.location.href = '/restaurant/login';
         }
 
-        function viewRestaurant(id) {
-            alert(`Viewing Restaurant #${id}`);
-            // Redirect or fetch details for the restaurant
-            // Example: window.location.href = `/admin/view-restaurant/${id}`;
-        }
-
-        function deleteRestaurant(id) {
-            const confirmation = confirm(`Are you sure you want to delete Restaurant #${id}?`);
-            if (confirmation) {
-                alert(`Restaurant #${id} deleted!`);
-                // Add logic to delete the restaurant from the server
-                // Example: send DELETE request to the backend API
-            }
-        }
+        // Fetch and populate restaurants on page load
+        document.addEventListener('DOMContentLoaded', fetchRestaurants);
     </script>
 </body>
 </html>
