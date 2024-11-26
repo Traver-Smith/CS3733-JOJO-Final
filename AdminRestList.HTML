@@ -14,8 +14,42 @@
         header {
             background-color: #333;
             color: #fff;
-            padding: 20px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-left, .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .header-title {
+            flex-grow: 1;
             text-align: center;
+        }
+        .header-title h1 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .header-title h2 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: normal;
+            color: #ccc;
+        }
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
         }
         .container {
             max-width: 800px;
@@ -94,7 +128,17 @@
 </head>
 <body>
     <header>
-        <h1>Admin List of Restaurants</h1>
+        <div class="header-left">
+            <button onclick="makeReservation()">Make a Reservation</button>
+        </div>
+        <div class="header-title">
+            <h1>Tables4u</h1>
+            <h2>Admin List of Restaurants</h2>
+        </div>
+        <div class="header-right">
+            <button onclick="adminLogin()">Admin Login</button>
+            <button onclick="restaurantLogin()">Restaurant Login</button>
+        </div>
     </header>
     <div class="container">
         <!-- Restaurant #1 -->
@@ -140,6 +184,21 @@
     </div>
 
     <script>
+        function makeReservation() {
+            alert('Redirecting to Make a Reservation page...');
+            window.location.href = '/make-reservation';
+        }
+
+        function adminLogin() {
+            alert('Redirecting to Admin Login page...');
+            window.location.href = '/admin/login';
+        }
+
+        function restaurantLogin() {
+            alert('Redirecting to Restaurant Login page...');
+            window.location.href = '/restaurant/login';
+        }
+
         function viewRestaurant(id) {
             alert(`Viewing Restaurant #${id}`);
             // Redirect or fetch details for the restaurant
