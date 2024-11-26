@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin List of Restaurants</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .restaurant {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #fdfdfd;
+        }
+        .restaurant img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            background-color: #eee;
+        }
+        .restaurant h3 {
+            flex-grow: 1;
+            margin: 0;
+        }
+        .restaurant .actions {
+            display: flex;
+            gap: 10px;
+        }
+        .restaurant button {
+            border: none;
+            border-radius: 4px;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .view-button {
+            background-color: #007bff;
+            color: #fff;
+        }
+        .view-button:hover {
+            background-color: #0056b3;
+        }
+        .delete-button {
+            background-color: #dc3545;
+            color: #fff;
+        }
+        .delete-button:hover {
+            background-color: #a71d2a;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Admin List of Restaurants</h1>
+    </header>
+    <div class="container">
+        <!-- Restaurant #1 -->
+        <div class="restaurant">
+            <img src="placeholder.png" alt="Restaurant Image">
+            <h3>Restaurant #1</h3>
+            <div class="actions">
+                <button class="view-button" onclick="viewRestaurant(1)">View Restaurant</button>
+                <button class="delete-button" onclick="deleteRestaurant(1)">Delete Restaurant</button>
+            </div>
+        </div>
+        <!-- Restaurant #2 -->
+        <div class="restaurant">
+            <img src="placeholder.png" alt="Restaurant Image">
+            <h3>Restaurant #2</h3>
+            <div class="actions">
+                <button class="view-button" onclick="viewRestaurant(2)">View Restaurant</button>
+                <button class="delete-button" onclick="deleteRestaurant(2)">Delete Restaurant</button>
+            </div>
+        </div>
+        <!-- Restaurant #3 -->
+        <div class="restaurant">
+            <img src="placeholder.png" alt="Restaurant Image">
+            <h3>Restaurant #3</h3>
+            <div class="actions">
+                <button class="view-button" onclick="viewRestaurant(3)">View Restaurant</button>
+                <button class="delete-button" onclick="deleteRestaurant(3)">Delete Restaurant</button>
+            </div>
+        </div>
+        <!-- Add more restaurants as needed -->
+    </div>
+
+    <script>
+        function viewRestaurant(id) {
+            alert(`Viewing Restaurant #${id}`);
+            // Redirect or fetch details for the restaurant
+            // Example: window.location.href = `/admin/view-restaurant/${id}`;
+        }
+
+        function deleteRestaurant(id) {
+            const confirmation = confirm(`Are you sure you want to delete Restaurant #${id}?`);
+            if (confirmation) {
+                alert(`Restaurant #${id} deleted!`);
+                // Add logic to delete the restaurant from the server
+                // Example: send DELETE request to the backend API
+            }
+        }
+    </script>
+</body>
+</html>
