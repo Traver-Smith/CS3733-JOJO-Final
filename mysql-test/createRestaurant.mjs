@@ -1,61 +1,82 @@
-import mysql from 'mysql'
+import mysql from 'mysql2/promise'; // Using mysql2's promise-based API for cleaner handling
 
 export const handler = async (event) => {
-  
-  // get credentials from the db_access layer (loaded separately via AWS console)
-  var pool = mysql.createPool({
-      host: "calculatordb.chlxnoru1n0z.us-east-1.rds.amazonaws.com",
-      user: "calcAdmin",
-      password: "calc:pass",
-      database: "calc"
-  })
-  
-  let CountConstants = () => {
-    return new Promise((resolve, reject) => {
-        pool.query("SELECT COUNT(*) AS `num` FROM Constants;", [], (error, value) => {
-            if (error) { return reject(error); }
-            // turns into array containing single value [ { num: 13 } ]
-            let output = JSON.parse(JSON.stringify(value))
-            
-            // return first entry and grab its 'num' attribute
-            return resolve(output[0].num);
-        })
-    })
-}
+    const dbConfig = {
+        host: 'tables4u.clsi6iokwrcx.us-east-2.rds.amazonaws.com',
+        user: 'admin',
+        password: 'jojosiwa',
+        database: 'tablesApp'
+    };
 
-  let CreateRestaurant = (name, value) => {
-      return new Promise((resolve, reject) => {
-          pool.query("INSERT INTO Restaurant (restaurantName, value) VALUES (?, ?) ON DUPLICATE KEY UPDATE value=?;", [name, value, value], (error, rows) => {
-              if (error) { return reject(error); }
-              return resolve(rows);
-          })
-      })
-  }
+    let connection;
 
-  const numbers = await CountConstants()
-  let response;
-  if (numbers > 30) {
-     response = {
-      statusCode: 400,
-      error: "Too many constants defined."
-    }
-  } else {
-
-      // NOTE: what if fails?
-      const all_result = await CreateRestaurant(event.name, event.value)
-      
-      response = {
-        statusCode: 200,
-        result: {
-          "name" : event.name,
-          "value" : event.value
+    try {
+        // Validate and parse the input data
+        if (!event) {
+            return {
+                statusCode: 400,
+                body: JSON.stringify({ error: 'Missing request body.' }),
+            };
         }
-      }
+
+        
+
+        const restaurantName = event.restaurantName;
+        const address = event.address
+
+        // Validate the required fields
+        if (!restaurantName || !address) {
+            return {
+                statusCode: 400,
+                body: JSON.stringify({ error: 'Invalid input. restaurantName and address are required.' }),
+            };
+        }
+        
+        const hashAddress = (str) => {
+            let hash = 5381;
+            for (let i = 0; i < str.length; i++) {
+                hash = (hash * 33) ^ str.charCodeAt(i); // XOR with character code
+            }
+            return hash >>> 0; // Ensure the result is non-negative
+        };
+        
+        const restaurantPassword = hashAddress(address).toString();
+        
+        // Establish the connection using mysql2's promise API
+        connection = await mysql.createConnection(dbConfig);
+
+        console.log('Connection established');
+
+        // Insert the new restaurant into the database with default values
+        const query = `
+            INSERT INTO Restaurant (restaurantName, address, closeTime, openTime, closedDays, isActive, restaurantPassword)
+            VALUES (?, ?, 0, 0, 'none', 0, ?)
+        `;
+        const [result] = await connection.execute(query, [restaurantName, address, restaurantPassword]);
+
+        console.log('Restaurant created successfully:', result);
+
+        // Return success response
+        return {
+            statusCode: 201,
+            body: JSON.stringify({ message: 'Restaurant created successfully', restaurantId: result.insertId }),
+        };
+    } catch (err) {
+        console.error('Error during query execution:', err.message);
+
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: 'Unexpected error occurred', message: err.message }),
+        };
+    } finally {
+        // Close the connection if it was successfully created
+        if (connection) {
+            try {
+                await connection.end();
+                console.log('Connection closed');
+            } catch (endErr) {
+                console.error('Error closing the connection:', endErr.message);
+            }
+        }
     }
-  
-  pool.end()     // close DB connections
-
-  return response;
-}
-
-
+};
