@@ -77,6 +77,7 @@
         }
         .restaurant {
             display: flex;
+            justify-content: space-between;
             align-items: center;
             border: 1px solid #ddd;
             border-radius: 8px;
@@ -84,16 +85,25 @@
             padding: 10px;
             background-color: #fdfdfd;
         }
+        .restaurant-details {
+            flex-grow: 1;
+        }
         .restaurant img {
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            margin-right: 15px;
+            margin-right: 10px;
             background-color: #eee;
+            float: left;
         }
         .restaurant h3 {
-            flex-grow: 1;
             margin: 0;
+            font-size: 18px;
+        }
+        .restaurant p {
+            margin: 5px 0 0;
+            font-size: 14px;
+            color: #555;
         }
         .restaurant button {
             background-color: #007bff;
@@ -133,28 +143,52 @@
             </select>
             <button onclick="filterRestaurants()">Filter</button>
         </div>
-        <!-- Restaurant #1 -->
-        <div class="restaurant">
-            <img src="placeholder.png" alt="Restaurant Image">
-            <h3>Restaurant #1</h3>
-            <button onclick="viewReservations(1)">View Reservations</button>
+        <div id="restaurant-list">
+            <!-- Restaurants will be dynamically added here -->
         </div>
-        <!-- Restaurant #2 -->
-        <div class="restaurant">
-            <img src="placeholder.png" alt="Restaurant Image">
-            <h3>Restaurant #2</h3>
-            <button onclick="viewReservations(2)">View Reservations</button>
-        </div>
-        <!-- Restaurant #3 -->
-        <div class="restaurant">
-            <img src="placeholder.png" alt="Restaurant Image">
-            <h3>Restaurant #3</h3>
-            <button onclick="viewReservations(3)">View Reservations</button>
-        </div>
-        <!-- Add more restaurants dynamically as needed -->
     </div>
 
     <script>
+        const apiEndpoint = 'https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/ConsumerList';
+
+        // Fetch restaurants and populate the page
+        async function fetchRestaurants() {
+            try {
+                const response = await fetch(apiEndpoint);
+                const data = await response.json();
+                const restaurants = JSON.parse(data.body).data;
+                renderRestaurants(restaurants);
+            } catch (error) {
+                console.error('Error fetching restaurants:', error);
+            }
+        }
+
+        // Render restaurants dynamically
+        function renderRestaurants(restaurants) {
+            const restaurantList = document.getElementById('restaurant-list');
+            restaurantList.innerHTML = ''; // Clear existing content
+
+            restaurants.forEach((restaurant, index) => {
+                const restaurantCard = `
+                    <div class="restaurant">
+                        <div class="restaurant-details">
+                            <img src="placeholder.png" alt="Restaurant Image">
+                            <h3>${restaurant.restaurantName}</h3>
+                            <p>${restaurant.Address}</p>
+                        </div>
+                        <button onclick="viewReservations(${index})">View Reservations</button>
+                    </div>
+                `;
+                restaurantList.innerHTML += restaurantCard;
+            });
+        }
+
+        // View reservations for a restaurant
+        function viewReservations(index) {
+            alert(`Viewing reservations for restaurant index ${index}`);
+            // Add logic for redirecting or displaying reservations
+        }
+
         // Redirects for header buttons
         function makeReservation() {
             alert('Redirecting to Make a Reservation page...');
@@ -209,13 +243,11 @@
             alert(`Filtering restaurants for ${selectedDate} at ${selectedTime}`);
         }
 
-        // View reservations for a restaurant
-        function viewReservations(id) {
-            alert(`Viewing reservations for Restaurant #${id}`);
-        }
-
-        // Populate the time dropdown on page load
-        document.addEventListener('DOMContentLoaded', populateTimeDropdown);
+        // Fetch and populate restaurants on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchRestaurants();
+            populateTimeDropdown();
+        });
     </script>
 </body>
 </html>
