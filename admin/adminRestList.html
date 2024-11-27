@@ -138,7 +138,7 @@
     </div>
 
     <script>
-        const apiEndpoint = 'https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage1/AdministratorList';
+        const apiEndpoint = 'https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/AdministratorList';
 
         // Fetch restaurants and populate the page
         async function fetchRestaurants() {
@@ -167,7 +167,7 @@
                             <h3>${restaurant.restaurantName}</h3>
                         </div>
                         <p class="status">Status: <span class="${isActive}">${isActive === 'active' ? 'Active' : 'Inactive'}</span></p>
-                        <p class="address">Address: ${restaurant.Address}</p>
+                        <p class="address">Address: ${restaurant.address}</p>
                         <div class="actions">
                             <button class="view-button" onclick="viewRestaurant(${index})">View Restaurant</button>
                             <button class="delete-button" onclick="deleteRestaurant(${index}, '${restaurant.restaurantName}')">Delete Restaurant</button>

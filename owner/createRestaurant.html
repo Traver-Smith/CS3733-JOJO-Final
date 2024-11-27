@@ -100,6 +100,17 @@
         button[type="button"]:hover {
             background-color: #218838;
         }
+        .error, .success {
+            margin-top: 10px;
+            font-size: 14px;
+            text-align: center;
+        }
+        .error {
+            color: #dc3545;
+        }
+        .success {
+            color: #28a745;
+        }
     </style>
 </head>
 <body>
@@ -118,16 +129,20 @@
     </header>
     <div class="container">
         <h1 class="form-title">Create Restaurant</h1>
-        <form id="createRestaurantForm">
+        <form id="createRestaurantForm" onsubmit="event.preventDefault(); createRestaurant();">
             <label for="restaurantName">Restaurant Name</label>
             <input type="text" id="restaurantName" placeholder="Enter the restaurant name" required>
             <label for="restaurantAddress">Restaurant Address</label>
             <input type="text" id="restaurantAddress" placeholder="Enter the restaurant address" required>
             <button type="button" onclick="createRestaurant()">Create Restaurant</button>
+            <p class="error" id="errorMessage"></p>
+            <p class="success" id="successMessage"></p>
         </form>
     </div>
 
     <script>
+        const apiEndpoint = 'https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/CreateRestaurant';
+
         function makeReservation() {
             alert('Redirecting to Make a Reservation page...');
             window.location.href = '/make-reservation';
@@ -143,16 +158,48 @@
             window.location.href = '/restaurant/login';
         }
 
-        function createRestaurant() {
-            const name = document.getElementById('restaurantName').value;
-            const address = document.getElementById('restaurantAddress').value;
+        async function createRestaurant() {
+            const name = document.getElementById('restaurantName').value.trim();
+            const address = document.getElementById('restaurantAddress').value.trim();
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
 
-            if (name && address) {
-                alert(`Creating restaurant:\nName: ${name}\nAddress: ${address}`);
-                // Perform backend API call here to create the restaurant
-                window.location.href = '/restaurant/dashboard'; // Redirect to restaurant dashboard
-            } else {
-                alert('Please fill in all fields.');
+            // Clear previous messages
+            errorMessage.textContent = '';
+            successMessage.textContent = '';
+
+            // Validate input
+            if (!name || !address) {
+                errorMessage.textContent = 'Please fill in all required fields.';
+                return;
+            }
+
+            // Prepare payload
+            const payload = { restaurantName: name, address: address };
+
+            try {
+                // Send POST request to the API
+                const response = await fetch(apiEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload),
+                });
+
+                const result = await response.json();
+
+                if (response.status === 201) {
+                    // Success: Restaurant created
+                    successMessage.textContent = 'Restaurant created successfully!';
+                    document.getElementById('createRestaurantForm').reset();
+                } else {
+                    // Error handling
+                    errorMessage.textContent = result.error || 'An unexpected error occurred.';
+                }
+            } catch (error) {
+                console.error('Error creating restaurant:', error);
+                errorMessage.textContent = 'Failed to connect to the server. Please try again later.';
             }
         }
     </script>

@@ -7,9 +7,9 @@
   <style>
     body {
       font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
       margin: 0;
       padding: 0;
-      background-color: #f9f9f9;
     }
     header {
       background-color: #333;
@@ -32,12 +32,10 @@
       margin: 0;
       font-size: 20px;
       font-weight: bold;
-      color: #fff;
     }
     .header-title .subtitle {
       margin: 0;
       font-size: 14px;
-      font-weight: normal;
       color: #ccc;
     }
     button {
@@ -74,6 +72,7 @@
       padding: 20px;
       margin-bottom: 20px;
       border-radius: 5px;
+      box-sizing: border-box;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
     .section h2 {
@@ -82,18 +81,21 @@
     }
     .section textarea, .section select, .section input {
       width: 100%;
+      box-sizing: border-box;
       padding: 10px;
       margin: 10px 0;
       border: 1px solid #ddd;
       border-radius: 5px;
       font-size: 1rem;
     }
+    .section textarea {
+      resize: none;
+    }
     .section button {
-      display: inline-block;
       background-color: #007BFF;
       color: #fff;
+      padding: 10px 10px;
       border: none;
-      padding: 10px 20px;
       font-size: 1rem;
       border-radius: 5px;
       cursor: pointer;
@@ -101,19 +103,33 @@
     .section button:hover {
       background-color: #0056b3;
     }
-    .time-select {
+    .day-select {
+      margin-bottom: 0px;
+    }
+    .day-select h3 {
+      margin: 0 0 10px 0;
+    }
+    .day-controls {
       display: flex;
-      justify-content: space-between;
+      align-items: center;
       gap: 10px;
     }
-    .time-select select {
+    .day-controls label {
+      display: flex;
+      align-items: center;
+      gap: 0px;
+      margin: 10px;
+    }
+    .day-controls select {
       flex: 1;
+      gap: 10px;
+      margin: 10px;
     }
-    .publish-btn {
+    .publish-btn, .activate-btn {
       text-align: center;
       margin-top: 30px;
     }
-    .publish-btn button {
+    .publish-btn button, .activate-btn button {
       background-color: #28a745;
       color: white;
       font-size: 1.2rem;
@@ -122,23 +138,7 @@
       border-radius: 5px;
       cursor: pointer;
     }
-    .publish-btn button:hover {
-      background-color: #218838;
-    }
-    .activate-btn {
-      text-align: center;
-      margin-top: 30px;
-    }
-    .activate-btn button {
-      background-color: #28a745;
-      color: white;
-      font-size: 1.2rem;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .activate-btn button:hover {
+    .publish-btn button:hover, .activate-btn button:hover {
       background-color: #218838;
     }
   </style>
@@ -159,17 +159,12 @@
   </header>
   <div class="container">
     <div class="header">
-      <h1>Welcome</h1>
+      <h1>Edit Restaurant</h1>
       <p>(Restaurant Name)</p>
     </div>
     <div class="section">
       <h2>Description of Restaurant</h2>
       <textarea placeholder="Enter a description of the restaurant..."></textarea>
-      <button>Save</button>
-    </div>
-    <div class="section">
-      <h2>Location</h2>
-      <textarea placeholder="Enter the restaurant location..."></textarea>
       <button>Save</button>
     </div>
     <div class="section">
@@ -180,30 +175,154 @@
     <div class="section">
       <h2>Hours of Operation</h2>
       <p>Select opening and closing times for each day:</p>
-      <div class="time-select">
-        <label>Monday:</label>
-        <select>
-          <option value="">Opening Time</option>
-          <option>6:00 AM</option>
-          <option>7:00 AM</option>
-          <option>8:00 AM</option>
-          <option>9:00 AM</option>
-          <option>10:00 AM</option>
-          <option>11:00 AM</option>
-          <option>12:00 PM</option>
-        </select>
-        <select>
-          <option value="">Closing Time</option>
-          <option>6:00 PM</option>
-          <option>7:00 PM</option>
-          <option>8:00 PM</option>
-          <option>9:00 PM</option>
-          <option>10:00 PM</option>
-          <option>11:00 PM</option>
-          <option>12:00 AM</option>
-        </select>
+      
+      <!-- Monday -->
+      <div class="day-select">
+        <h3>Monday</h3>
+        <div class="day-controls">
+          <label>
+            <input type="checkbox" name="open_days[]" value="Monday" id="monday" checked onchange="toggleTimeSelectors(this)">
+            Open
+          </label>
+          <select name="monday_opening_time">
+            <option value="">Opening Time</option>
+            <option>6:00 AM</option>
+            <option>7:00 AM</option>
+            <option>8:00 AM</option>
+            <option>9:00 AM</option>
+            <option>10:00 AM</option>
+            <option>11:00 AM</option>
+            <option>12:00 PM</option>
+          </select>
+          <select name="monday_closing_time">
+            <option value="">Closing Time</option>
+            <option>6:00 PM</option>
+            <option>7:00 PM</option>
+            <option>8:00 PM</option>
+            <option>9:00 PM</option>
+            <option>10:00 PM</option>
+            <option>11:00 PM</option>
+            <option>12:00 AM</option>
+          </select>
+        </div>
       </div>
-      <!-- Repeat similar blocks for other days -->
+
+      <!-- Repeat for other days -->
+
+      <!-- Tuesday -->
+      <div class="day-select">
+        <h3>Tuesday</h3>
+        <div class="day-controls">
+          <label>
+            <input type="checkbox" name="open_days[]" value="Tuesday" id="tuesday" checked onchange="toggleTimeSelectors(this)">
+            Open
+          </label>
+          <select name="tuesday_opening_time">
+            <option value="">Opening Time</option>
+            <!-- Add options -->
+          </select>
+          <select name="tuesday_closing_time">
+            <option value="">Closing Time</option>
+            <!-- Add options -->
+          </select>
+        </div>
+      </div>
+
+      <!-- Wednesday -->
+      <div class="day-select">
+        <h3>Wednesday</h3>
+        <div class="day-controls">
+          <label>
+            <input type="checkbox" name="open_days[]" value="Wednesday" id="wednesday" checked onchange="toggleTimeSelectors(this)">
+            Open
+          </label>
+          <select name="wednesday_opening_time">
+            <option value="">Opening Time</option>
+            <!-- Add options -->
+          </select>
+          <select name="wednesday_closing_time">
+            <option value="">Closing Time</option>
+            <!-- Add options -->
+          </select>
+        </div>
+      </div>
+
+      <!-- Thursday -->
+      <div class="day-select">
+        <h3>Thursday</h3>
+        <div class="day-controls">
+          <label>
+            <input type="checkbox" name="open_days[]" value="Thursday" id="thursday" checked onchange="toggleTimeSelectors(this)">
+            Open
+          </label>
+          <select name="thursday_opening_time">
+            <option value="">Opening Time</option>
+            <!-- Add options -->
+          </select>
+          <select name="thursday_closing_time">
+            <option value="">Closing Time</option>
+            <!-- Add options -->
+          </select>
+        </div>
+      </div>
+
+      <!-- Friday -->
+      <div class="day-select">
+        <h3>Friday</h3>
+        <div class="day-controls">
+          <label>
+            <input type="checkbox" name="open_days[]" value="Friday" id="friday" checked onchange="toggleTimeSelectors(this)">
+            this is a test
+          </label>
+          <select name="friday_opening_time">
+            <option value="">Opening Time</option>
+            <!-- Add options -->
+          </select>
+          <select name="friday_closing_time">
+            <option value="">Closing Time</option>
+            <!-- Add options -->
+          </select>
+        </div>
+      </div>
+
+      <!-- Saturday -->
+      <div class="day-select">
+        <h3>Saturday</h3>
+        <div class="day-controls">
+          <label>
+            <input type="checkbox" name="open_days[]" value="Saturday" id="saturday" checked onchange="toggleTimeSelectors(this)">
+            Open
+          </label>
+          <select name="saturday_opening_time">
+            <option value="">Opening Time</option>
+            <!-- Add options -->
+          </select>
+          <select name="saturday_closing_time">
+            <option value="">Closing Time</option>
+            <!-- Add options -->
+          </select>
+        </div>
+      </div>
+
+      <!-- Sunday -->
+      <div class="day-select">
+        <h3>Sunday</h3>
+        <div class="day-controls">
+          <label>
+            <input type="checkbox" name="open_days[]" value="Sunday" id="sunday" checked onchange="toggleTimeSelectors(this)">
+            Open
+          </label>
+          <select name="sunday_opening_time">
+            <option value="">Opening Time</option>
+            <!-- Add options -->
+          </select>
+          <select name="sunday_closing_time">
+            <option value="">Closing Time</option>
+            <!-- Add options -->
+          </select>
+        </div>
+      </div>
+
       <button>Save</button>
     </div>
     <div class="section">
@@ -229,19 +348,28 @@
 
   <script>
     function makeReservation() {
-      alert('Redirecting to Make a Reservation page...');
       window.location.href = '/make-reservation';
     }
 
     function adminLogin() {
-      alert('Redirecting to Admin Login page...');
       window.location.href = '/admin/login';
     }
 
     function restaurantLogin() {
-      alert('Redirecting to Restaurant Login page...');
       window.location.href = '/restaurant/login';
     }
+
+    function toggleTimeSelectors(checkbox) {
+      const timeSelectors = checkbox.closest('.day-controls').querySelectorAll('select');
+      timeSelectors.forEach(select => {
+        select.disabled = !checkbox.checked;
+      });
+    }
+
+    // Initialize time selectors based on checkbox states on page load
+    document.querySelectorAll('.day-select input[type="checkbox"]').forEach(checkbox => {
+      toggleTimeSelectors(checkbox);
+    });
   </script>
 </body>
 </html>
