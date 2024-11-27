@@ -159,49 +159,60 @@
         }
 
         async function createRestaurant() {
-            const name = document.getElementById('restaurantName').value.trim();
-            const address = document.getElementById('restaurantAddress').value.trim();
-            const errorMessage = document.getElementById('errorMessage');
-            const successMessage = document.getElementById('successMessage');
+    const name = document.getElementById('restaurantName').value.trim();
+    const address = document.getElementById('restaurantAddress').value.trim();
+    const errorMessage = document.getElementById('errorMessage');
+    const successMessage = document.getElementById('successMessage');
 
-            // Clear previous messages
-            errorMessage.textContent = '';
-            successMessage.textContent = '';
+    // Clear previous messages
+    errorMessage.textContent = '';
+    successMessage.textContent = '';
 
-            // Validate input
-            if (!name || !address) {
-                errorMessage.textContent = 'Please fill in all required fields.';
-                return;
+    // Validate input
+    if (!name || !address) {
+        errorMessage.textContent = 'Please fill in all required fields.';
+        return;
+    }
+
+    // Prepare payload
+    const payload = { restaurantName: name, address: address };
+
+    try {
+        // Send POST request to the API
+        const response = await fetch(apiEndpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        });
+
+        // Parse the top-level response
+        const responseJson = await response.json();
+
+        if (response.status === 200) {
+            // Parse the body property to get the actual message and password
+            const result = JSON.parse(responseJson.body);
+
+            // Success: Restaurant created
+            successMessage.textContent = result.message || 'Restaurant created successfully!';
+            document.getElementById('createRestaurantForm').reset();
+
+            // Display the restaurant password in an alert
+            if (result.restaurantPassword) {
+                alert(`Your restaurant password is: ${result.restaurantPassword}`);
+            } else {
+                console.warn('No restaurant password found in the response.');
             }
-
-            // Prepare payload
-            const payload = { restaurantName: name, address: address };
-
-            try {
-                // Send POST request to the API
-                const response = await fetch(apiEndpoint, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(payload),
-                });
-
-                const result = await response.json();
-
-                if (response.status === 201) {
-                    // Success: Restaurant created
-                    successMessage.textContent = 'Restaurant created successfully!';
-                    document.getElementById('createRestaurantForm').reset();
-                } else {
-                    // Error handling
-                    errorMessage.textContent = result.error || 'An unexpected error occurred.';
-                }
-            } catch (error) {
-                console.error('Error creating restaurant:', error);
-                errorMessage.textContent = 'Failed to connect to the server. Please try again later.';
-            }
+        } else {
+            // Error handling
+            errorMessage.textContent = responseJson.error || 'An unexpected error occurred.';
         }
+    } catch (error) {
+        console.error('Error creating restaurant:', error);
+        errorMessage.textContent = 'Failed to connect to the server. Please try again later.';
+    }
+}
     </script>
 </body>
 </html>
