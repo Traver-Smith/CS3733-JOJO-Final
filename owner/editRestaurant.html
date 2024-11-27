@@ -234,7 +234,6 @@
     let restaurantName = ''; // Will be set after fetching restaurant details
     let isActive = false;
     let tables = [];
-    let tableCounter = 1; // Initialize table counter
 
     // Fetch existing tables to determine the next table number
     async function fetchExistingTables() {
@@ -249,14 +248,21 @@
 
         const data = await response.json();
 
-        console.log('getTables API response:', data); // Debugging
+        console.log('listTables API response:', data); // Debugging
 
-        if (response.status === 200 && Array.isArray(data.data)) {
-          tables = data.data;
-          tableCounter = tables.length > 0 ? Math.max(...tables.map(t => t.tableNum)) + 1 : 1;
-          renderTables();
+        if (response.status === 200) {
+          const parsedData = JSON.parse(data.body);
+
+          if (Array.isArray(parsedData.data)) {
+            tables = parsedData.data;
+            renderTables();
+          } else {
+            console.warn('No existing tables found or error fetching tables.');
+            tables = [];
+            renderTables();
+          }
         } else {
-          console.warn('No existing tables found or error fetching tables.');
+          console.warn('Error fetching tables:', data.error);
           tables = [];
           renderTables();
         }
@@ -286,72 +292,68 @@
       tableList.innerHTML = tables
         .map(
           (table) =>
-            `<div class="table-item" id="table_${table.tableNum}">
-              <span>Table ${table.tableNum}</span>
+            `<div class="table-item" id="table_${table.tableID}">
+              <span>Table ${table.tableID}</span>
               <span>Seats: ${table.numSeats}</span>
-              <button onclick="removeTable(${table.tableNum})">Remove</button>
+              <button onclick="removeTable(${table.tableID})">Remove</button>
             </div>`
         )
         .join('');
     }
 
     async function addTable() {
-  const numSeats = parseInt(document.getElementById('table_seats').value, 10);
-  const errorDiv = document.getElementById('error_message');
-  errorDiv.textContent = '';
-
-  if (isActive) {
-    errorDiv.textContent = 'Cannot add tables after activation.';
-    return;
-  }
-
-  if (!numSeats || !restaurantAddress) {
-    errorDiv.textContent = 'Please enter the number of seats and ensure you are logged in.';
-    return;
-  }
-
-  const tableNum = tableCounter++; // Auto-assign table number
-
-  try {
-    const response = await fetch('https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/addTable', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        numSeats: numSeats,
-        tableID: tableNum, // Assuming tableID is the same as tableNum
-        restaurantID: restaurantAddress, // Use restaurantAddress as restaurantID
-      }),
-    });
-
-    const data = await response.json();
-
-    if (response.status === 200) {
-      alert('Table added successfully!');
-      tables.push({ tableNum: tableNum, numSeats: numSeats });
-      renderTables();
-      document.getElementById('table_seats').value = '';
-    } else {
-      errorDiv.textContent = data.error || 'An error occurred while adding the table.';
-      tableCounter--; // Revert table number on error
-    }
-  } catch (error) {
-    console.error('Error adding table:', error);
-    errorDiv.textContent = 'An unexpected error occurred. Please try again later.';
-    tableCounter--; // Revert table number on error
-  }
-}
-    async function removeTable(tableNum) {
+      const numSeats = parseInt(document.getElementById('table_seats').value, 10);
       const errorDiv = document.getElementById('error_message');
       errorDiv.textContent = '';
 
-      if (!restaurantAddress || !tableNum) {
-        errorDiv.textContent = 'Invalid request. Restaurant address or Table Number missing.';
+      if (isActive) {
+        errorDiv.textContent = 'Cannot add tables after activation.';
         return;
       }
 
-      const confirmDelete = confirm(`Are you sure you want to remove Table ${tableNum}?`);
+      if (!numSeats || !restaurantAddress) {
+        errorDiv.textContent = 'Please enter the number of seats and ensure you are logged in.';
+        return;
+      }
+
+      try {
+        const response = await fetch('https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/addTable', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            numSeats: numSeats,
+            restaurantID: restaurantAddress,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.status === 200) {
+          alert('Table added successfully!');
+          // Fetch the updated list of tables
+          fetchExistingTables();
+          document.getElementById('table_seats').value = '';
+        } else {
+          errorDiv.textContent = data.error || 'An error occurred while adding the table.';
+        }
+      } catch (error) {
+        console.error('Error adding table:', error);
+        errorDiv.textContent = 'An unexpected error occurred. Please try again later.';
+      }
+    }
+
+    async function removeTable(tableID) {
+      const errorDiv = document.getElementById('error_message');
+      errorDiv.textContent = '';
+
+      if (!restaurantAddress || !tableID) {
+        errorDiv.textContent = 'Invalid request. Restaurant address or Table ID missing.';
+        return;
+      }
+
+      const confirmDelete = confirm(`Are you sure you want to remove Table ${tableID}?`);
       if (!confirmDelete) {
         return;
       }
@@ -363,19 +365,20 @@
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            tableNum: tableNum,
-            address: restaurantAddress,
+            tableID: tableID,
+            restaurantID: restaurantAddress,
           }),
         });
 
         const data = await response.json();
 
         if (response.status === 200) {
-          alert(`Table ${tableNum} removed successfully!`);
-          tables = tables.filter((table) => table.tableNum !== tableNum);
+          alert(`Table ${tableID} removed successfully!`);
+          // Remove the table from the local array and re-render
+          tables = tables.filter((table) => table.tableID !== tableID);
           renderTables();
         } else {
-          errorDiv.textContent = data.error || `Failed to remove Table ${tableNum}.`;
+          errorDiv.textContent = data.error || `Failed to remove Table ${tableID}.`;
         }
       } catch (error) {
         console.error('Error removing table:', error);
@@ -519,12 +522,13 @@
   }
 }
 
+
     async function activateRestaurant() {
-      // (Your existing code for activateRestaurant)
+      // Your existing activateRestaurant function remains unchanged
     }
 
     function disableEditing() {
-      // (Your existing code for disableEditing)
+      // Your existing disableEditing function remains unchanged
     }
 
     // Call functions on page load
