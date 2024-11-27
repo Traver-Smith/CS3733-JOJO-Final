@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin List of Restaurants</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-left, .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .header-title {
+            flex-grow: 1;
+            text-align: center;
+        }
+        .header-title h1 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .header-title h2 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: normal;
+            color: #ccc;
+        }
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .restaurant {
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #fdfdfd;
+        }
+        .restaurant-header {
+            display: flex;
+            align-items: center;
+        }
+        .restaurant img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            background-color: #eee;
+        }
+        .restaurant h3 {
+            margin: 0;
+            flex-grow: 1;
+        }
+        .status {
+            font-size: 14px;
+            margin-top: 5px;
+            color: grey;
+        }
+        .status .active {
+            color: green;
+        }
+        .status .inactive {
+            color: red;
+        }
+        .restaurant .address {
+            font-size: 14px;
+            color: #555;
+            margin: 10px 0;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+        .restaurant button {
+            border: none;
+            border-radius: 4px;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .view-button {
+            background-color: #007bff;
+            color: #fff;
+        }
+        .view-button:hover {
+            background-color: #0056b3;
+        }
+        .delete-button {
+            background-color: #dc3545;
+            color: #fff;
+        }
+        .delete-button:hover {
+            background-color: #a71d2a;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <button onclick="makeReservation()">Make a Reservation</button>
+        </div>
+        <div class="header-title">
+            <h1>Tables4u</h1>
+            <h2>Admin List of Restaurants</h2>
+        </div>
+        <div class="header-right">
+            <button onclick="adminLogin()">Admin Login</button>
+            <button onclick="restaurantLogin()">Restaurant Login</button>
+        </div>
+    </header>
+    <div class="container" id="restaurant-list">
+        <!-- Restaurants will be populated here -->
+    </div>
+
+    <script>
+        
+        function makeReservation() {
+            alert('Redirecting to Make a Reservation page...');
+            window.location.href = '/make-reservation';
+        }
+
+        function adminLogin() {
+            alert('Redirecting to Admin Login page...');
+            window.location.href = '/admin/login';
+        }
+
+        function restaurantLogin() {
+            alert('Redirecting to Restaurant Login page...');
+            window.location.href = '/restaurant/login';
+        }
+
+        function viewRestaurant(id) {
+            alert(`Viewing Restaurant #${id}`);
+            // Redirect or fetch details for the restaurant
+        }
+
+        function deleteRestaurant(id) {
+            const confirmation = confirm(`Are you sure you want to delete Restaurant #${id}?`);
+            if (confirmation) {
+                alert(`Restaurant #${id} deleted!`);
+                // Add logic to delete the restaurant from the server
+            }
+        }
+
+        // Fetch and populate the restaurant list
+        async function loadRestaurants() {
+            const container = document.getElementById('restaurant-list');
+
+            try {
+                const response = await fetch('http://localhost:3000/restaurants');
+                if (!response.ok) throw new Error('Failed to fetch restaurants');
+
+                const restaurants = await response.json();
+
+                // Populate the container with restaurant data
+                restaurants.forEach(restaurant => {
+                    const restaurantDiv = document.createElement('div');
+                    restaurantDiv.className = 'restaurant';
+                    restaurantDiv.innerHTML = `
+                        <div class="restaurant-header">
+                            <img src="placeholder.png" alt="Restaurant Image">
+                            <h3>${restaurant.restaurantName}</h3>
+                        </div>
+                        <p class="status">Status: <span class="${restaurant.isActive ? 'active' : 'inactive'}">
+                            ${restaurant.isActive ? 'Active' : 'Inactive'}
+                        </span></p>
+                        <p class="address">Address: ${restaurant.address}</p>
+                        <div class="actions">
+                            <button class="view-button" onclick="viewRestaurant(${restaurant.id})">View Restaurant</button>
+                            <button class="delete-button" onclick="deleteRestaurant(${restaurant.id})">Delete Restaurant</button>
+                        </div>
+                    `;
+                    container.appendChild(restaurantDiv);
+                });
+            } catch (error) {
+                console.error('Error loading restaurants:', error.message);
+                container.innerHTML = `<p>Failed to load restaurants. Please try again later.</p>`;
+            }
+        }
+
+        // Load the restaurant list on page load
+        loadRestaurants();
+    </script>
+</body>
+</html>
