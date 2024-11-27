@@ -129,7 +129,7 @@
         </div>
         <div class="header-right">
             <button onclick="adminLogin()">Admin Login</button>
-            <button onclick="restaurantLogin()">Restaurant Login</button>
+            <button onclick="restaurantLogin()">Restaurant Login/Create</button>
         </div>
     </header>
     <div class="container">
@@ -241,6 +241,17 @@
             }
 
             alert(`Filtering restaurants for ${selectedDate} at ${selectedTime}`);
+        }
+        function makeReservation() {
+        window.location.href = 'makeReservation.html';
+        }
+
+        function adminLogin() {
+            window.location.href = 'http://teamjojobucket.s3-website.us-east-2.amazonaws.com/adminLogin.html';
+        }
+
+        function restaurantLogin() {
+            window.location.href = 'http://teamjojobucket.s3-website.us-east-2.amazonaws.com/ownerLogin.html';
         }
 
         // Fetch and populate restaurants on page load

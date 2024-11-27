@@ -534,9 +534,43 @@
 }
 
 
-    async function activateRestaurant() {
-      // Your existing activateRestaurant function remains unchanged
+async function activateRestaurant() {
+  const errorDiv = document.getElementById('error_message');
+  errorDiv.textContent = '';
+
+  if (!restaurantAddress) {
+    errorDiv.textContent = 'Restaurant address is missing. Please log in again.';
+    return;
+  }
+
+  const confirmActivate = confirm('Are you sure you want to activate this restaurant?');
+  if (!confirmActivate) {
+    return;
+  }
+
+  try {
+    const response = await fetch('https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/ActivateRestaurant', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ address: restaurantAddress }),
+    });
+
+    const data = await response.json();
+
+    if (response.status === 200) {
+      alert('Restaurant activated successfully!');
+      isActive = true; // Update the isActive variable
+      disableEditing(); // Optionally disable further editing if needed
+    } else {
+      errorDiv.textContent = data.error || 'An error occurred while activating the restaurant.';
     }
+  } catch (error) {
+    console.error('Error activating restaurant:', error);
+    errorDiv.textContent = 'An unexpected error occurred. Please try again later.';
+  }
+}
 
     function disableEditing() {
       // Your existing disableEditing function remains unchanged

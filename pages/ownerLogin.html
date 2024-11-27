@@ -177,7 +177,7 @@
                     sessionStorage.setItem('restaurantPassword', restaurantPassword);
 
                     // Redirect to the edit restaurant page
-                    window.location.href = 'http://127.0.0.1:5500/owner/editRestaurant.html';
+                    window.location.href = 'http://teamjojobucket.s3-website.us-east-2.amazonaws.com/editRestaurant.html';
                 } else {
                     errorDiv.textContent = data.error || 'Invalid address or password.';
                 }
@@ -189,7 +189,7 @@
 
         function createRestaurant() {
             alert('Redirecting to Create Restaurant page...');
-            window.location.href = '/restaurant/create'; // Redirect to the create restaurant page
+            window.location.href = 'http://teamjojobucket.s3-website.us-east-2.amazonaws.com/createRestaurant.html'; // Redirect to the create restaurant page
         }
     </script>
 </body>
