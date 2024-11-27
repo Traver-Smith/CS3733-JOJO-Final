@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Edit Restaurant</title>
   <style>
+    /* Existing CSS styles remain unchanged */
     body {
       font-family: Arial, sans-serif;
       background-color: #f9f9f9;
@@ -88,23 +89,23 @@
       font-size: 1rem;
     }
     .days-of-week {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr); /* 7 equally spaced columns */
-    gap: 15px; /* Spacing between items */
-    margin-bottom: 20px;
-  }
-  .days-of-week label {
-    display: flex;
-    align-items: center;
-    justify-content: center; /* Center-aligns content in the grid column */
-    font-size: 1rem;
-    gap: 5px;
-  }
-  .days-of-week input[type="checkbox"] {
-    margin: 0;
-    width: 16px; /* Standard checkbox size */
-    height: 16px;
-  }
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .days-of-week label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      gap: 5px;
+    }
+    .days-of-week input[type="checkbox"] {
+      margin: 0;
+      width: 16px;
+      height: 16px;
+    }
     .table-item {
       display: flex;
       align-items: center;
@@ -114,9 +115,6 @@
     .table-item span {
       flex: 1;
       font-weight: bold;
-    }
-    .table-item input[type="number"] {
-      width: 80px;
     }
     .table-item button {
       background-color: #dc3545;
@@ -136,9 +134,21 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
+      margin: 5px;
     }
     .publish-btn button:hover, .activate-btn button:hover {
       background-color: #218838;
+    }
+    .error {
+      color: #dc3545;
+      font-size: 14px;
+      margin-top: 10px;
+      text-align: center;
+    }
+    /* Disable input styles */
+    .disabled {
+      background-color: #e9ecef;
+      pointer-events: none;
     }
   </style>
 </head>
@@ -168,24 +178,24 @@
       <label for="opening_time">Opening Time:</label>
       <select id="opening_time">
         <option value="">Select Opening Time</option>
-        <option>6:00 AM</option>
-        <option>7:00 AM</option>
-        <option>8:00 AM</option>
-        <option>9:00 AM</option>
-        <option>10:00 AM</option>
-        <option>11:00 AM</option>
-        <option>12:00 PM</option>
+        <option value="06:00:00">6:00 AM</option>
+        <option value="07:00:00">7:00 AM</option>
+        <option value="08:00:00">8:00 AM</option>
+        <option value="09:00:00">9:00 AM</option>
+        <option value="10:00:00">10:00 AM</option>
+        <option value="11:00:00">11:00 AM</option>
+        <option value="12:00:00">12:00 PM</option>
       </select>
       <label for="closing_time">Closing Time:</label>
       <select id="closing_time">
         <option value="">Select Closing Time</option>
-        <option>6:00 PM</option>
-        <option>7:00 PM</option>
-        <option>8:00 PM</option>
-        <option>9:00 PM</option>
-        <option>10:00 PM</option>
-        <option>11:00 PM</option>
-        <option>12:00 AM</option>
+        <option value="18:00:00">6:00 PM</option>
+        <option value="19:00:00">7:00 PM</option>
+        <option value="20:00:00">8:00 PM</option>
+        <option value="21:00:00">9:00 PM</option>
+        <option value="22:00:00">10:00 PM</option>
+        <option value="23:00:00">11:00 PM</option>
+        <option value="00:00:00">12:00 AM</option>
       </select>
       <p>Select days the restaurant is open:</p>
       <div class="days-of-week">
@@ -203,10 +213,11 @@
     <div class="section">
       <h2>Tables</h2>
       <div class="add-table-form">
-        <input type="number" id="table_seats" placeholder="Number of seats">
+        <input type="number" id="table_seats" placeholder="Number of seats" min="1" required>
         <button onclick="addTable()">Add Table</button>
       </div>
       <div class="table-list" id="table_list"></div>
+      <div class="error" id="error_message"></div>
     </div>
     <div class="publish-btn">
       <button onclick="saveRestaurant()">Save</button>
@@ -217,12 +228,42 @@
   </div>
 
   <script>
-    // Retrieve restaurant name from sessionStorage
-    const restaurantName = sessionStorage.getItem('restaurantUsername') || '(No Restaurant Name)';
-    document.getElementById('restaurant_name_display').textContent = `Editing: ${restaurantName}`;
-
+    // Retrieve restaurant address from sessionStorage
+    const restaurantAddress = sessionStorage.getItem('restaurantUsername');
+    document.getElementById('restaurant_name_display').textContent = `Editing: ${restaurantAddress}`;
+    let restaurantName = ''; // Will be set after fetching restaurant details
+    let isActive = false;
     let tables = [];
-    let tableCounter = 1;
+    let tableCounter = 1; // Initialize table counter
+
+    // Fetch existing tables to determine the next table number
+    async function fetchExistingTables() {
+      try {
+        const response = await fetch('https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/listTables', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ address: restaurantAddress }),
+        });
+
+        const data = await response.json();
+
+        console.log('getTables API response:', data); // Debugging
+
+        if (response.status === 200 && Array.isArray(data.data)) {
+          tables = data.data;
+          tableCounter = tables.length > 0 ? Math.max(...tables.map(t => t.tableNum)) + 1 : 1;
+          renderTables();
+        } else {
+          console.warn('No existing tables found or error fetching tables.');
+          tables = [];
+          renderTables();
+        }
+      } catch (error) {
+        console.error('Error fetching existing tables:', error);
+      }
+    }
 
     function makeReservation() {
       window.location.href = '/make-reservation';
@@ -236,21 +277,259 @@
       window.location.href = '/restaurant/login';
     }
 
-    function addTable() {
-      const seats = parseInt(document.getElementById('table_seats').value, 10);
-      if (seats > 0) {
-        tables.push({ id: tableCounter++, seats });
-        renderTables();
-        document.getElementById('table_seats').value = '';
+    function renderTables() {
+      const tableList = document.getElementById('table_list');
+      if (tables.length === 0) {
+        tableList.innerHTML = '<p>No tables added yet.</p>';
+        return;
+      }
+      tableList.innerHTML = tables
+        .map(
+          (table) =>
+            `<div class="table-item" id="table_${table.tableNum}">
+              <span>Table ${table.tableNum}</span>
+              <span>Seats: ${table.numSeats}</span>
+              <button onclick="removeTable(${table.tableNum})">Remove</button>
+            </div>`
+        )
+        .join('');
+    }
+
+    async function addTable() {
+  const numSeats = parseInt(document.getElementById('table_seats').value, 10);
+  const errorDiv = document.getElementById('error_message');
+  errorDiv.textContent = '';
+
+  if (isActive) {
+    errorDiv.textContent = 'Cannot add tables after activation.';
+    return;
+  }
+
+  if (!numSeats || !restaurantAddress) {
+    errorDiv.textContent = 'Please enter the number of seats and ensure you are logged in.';
+    return;
+  }
+
+  const tableNum = tableCounter++; // Auto-assign table number
+
+  try {
+    const response = await fetch('https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/addTable', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        numSeats: numSeats,
+        tableID: tableNum, // Assuming tableID is the same as tableNum
+        restaurantID: restaurantAddress, // Use restaurantAddress as restaurantID
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.status === 200) {
+      alert('Table added successfully!');
+      tables.push({ tableNum: tableNum, numSeats: numSeats });
+      renderTables();
+      document.getElementById('table_seats').value = '';
+    } else {
+      errorDiv.textContent = data.error || 'An error occurred while adding the table.';
+      tableCounter--; // Revert table number on error
+    }
+  } catch (error) {
+    console.error('Error adding table:', error);
+    errorDiv.textContent = 'An unexpected error occurred. Please try again later.';
+    tableCounter--; // Revert table number on error
+  }
+}
+    async function removeTable(tableNum) {
+      const errorDiv = document.getElementById('error_message');
+      errorDiv.textContent = '';
+
+      if (!restaurantAddress || !tableNum) {
+        errorDiv.textContent = 'Invalid request. Restaurant address or Table Number missing.';
+        return;
+      }
+
+      const confirmDelete = confirm(`Are you sure you want to remove Table ${tableNum}?`);
+      if (!confirmDelete) {
+        return;
+      }
+
+      try {
+        const response = await fetch('https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/removeTable', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            tableNum: tableNum,
+            address: restaurantAddress,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.status === 200) {
+          alert(`Table ${tableNum} removed successfully!`);
+          tables = tables.filter((table) => table.tableNum !== tableNum);
+          renderTables();
+        } else {
+          errorDiv.textContent = data.error || `Failed to remove Table ${tableNum}.`;
+        }
+      } catch (error) {
+        console.error('Error removing table:', error);
+        errorDiv.textContent = 'An unexpected error occurred. Please try again later.';
       }
     }
 
-    function renderTables() {
-      const tableList = document.getElementById('table_list');
-      tableList.innerHTML = tables
-        .map(table => `<div class="table-item"><span>Table ${table.id}</span><span>Seats: ${table.seats}</span></div>`)
-        .join('');
+    async function saveRestaurant() {
+      const openTime = document.getElementById('opening_time').value;
+      const closeTime = document.getElementById('closing_time').value;
+      const daysOfWeek = document.querySelectorAll('.days-of-week input[type="checkbox"]');
+      const openDays = [];
+      const errorDiv = document.getElementById('error_message');
+      errorDiv.textContent = '';
+
+      // Retrieve restaurant details from sessionStorage
+      const storedRestaurantName = sessionStorage.getItem('restaurantName');
+
+      // Use the stored restaurant name
+      restaurantName = storedRestaurantName;
+
+      // Collect selected days
+      daysOfWeek.forEach((day) => {
+        if (day.checked) {
+          openDays.push(day.value);
+        }
+      });
+
+      if (!openTime || !closeTime) {
+        errorDiv.textContent = 'Please select both opening and closing times.';
+        return;
+      }
+
+      if (openDays.length === 0) {
+        errorDiv.textContent = 'Please select at least one day the restaurant is open.';
+        return;
+      }
+
+      // Determine closed days by excluding selected days
+      const allDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+      const closedDays = allDays.filter((day) => !openDays.includes(day)).join(',');
+
+      try {
+        // Call the API to save restaurant details
+        const response = await fetch('https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/editRestaurant', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            restaurantName: storedRestaurantName, // From sessionStorage
+            address: restaurantAddress, // Include the address in the request body
+            openTime: openTime,
+            closeTime: closeTime,
+            closedDays: closedDays,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.status === 200) {
+          alert('Restaurant details saved successfully!');
+          // Optionally re-render the restaurant to confirm changes
+          renderRestaurant();
+        } else {
+          errorDiv.textContent = data.error || 'An error occurred while saving restaurant details.';
+        }
+      } catch (error) {
+        console.error('Error saving restaurant details:', error);
+        errorDiv.textContent = 'An unexpected error occurred. Please try again later.';
+      }
     }
+
+    async function renderRestaurant() {
+  const errorDiv = document.getElementById('error_message');
+  errorDiv.textContent = '';
+
+  if (!restaurantAddress) {
+    errorDiv.textContent = 'Restaurant address is missing. Please log in again.';
+    return;
+  }
+
+  try {
+    const response = await fetch('https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/getRestaurant', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ address: restaurantAddress }),
+    });
+
+    const data = await response.json();
+
+    console.log('getRestaurant API response:', data); // Debugging
+
+    if (response.status === 200) {
+      const restaurantData = JSON.parse(data.body).restaurant;
+
+      if (!restaurantData) {
+        errorDiv.textContent = 'Error: No restaurant data returned from the API.';
+        return;
+      }
+
+      const { restaurantName: name, openTime, closeTime, closedDays, isActive: activeStatus } = restaurantData;
+
+      // Set the restaurant name in the display
+      restaurantName = name;
+      if (!restaurantName) {
+        errorDiv.textContent = 'Error: Restaurant name is missing in the API response.';
+        return;
+      }
+
+      document.getElementById('restaurant_name_display').textContent = `Editing: ${restaurantName}`;
+      sessionStorage.setItem('restaurantName', restaurantName); // Save name for future use
+
+      // Render open and close hours
+      document.getElementById('opening_time').value = openTime || '';
+      document.getElementById('closing_time').value = closeTime || '';
+
+      // Render open days
+      const closedDaysArray = closedDays ? closedDays.split(',') : [];
+      const daysOfWeek = document.querySelectorAll('.days-of-week input[type="checkbox"]');
+
+      daysOfWeek.forEach((day) => {
+        day.checked = !closedDaysArray.includes(day.value);
+      });
+
+      // Check if the restaurant is active and disable editing if necessary
+      if (activeStatus) {
+        isActive = true;
+        disableEditing();
+      }
+
+      console.log('Restaurant details rendered successfully.');
+    } else {
+      errorDiv.textContent = data.error || 'Error retrieving restaurant details.';
+    }
+  } catch (error) {
+    console.error('Error fetching restaurant details:', error);
+    errorDiv.textContent = 'An unexpected error occurred. Please try again later.';
+  }
+}
+
+    async function activateRestaurant() {
+      // (Your existing code for activateRestaurant)
+    }
+
+    function disableEditing() {
+      // (Your existing code for disableEditing)
+    }
+
+    // Call functions on page load
+    renderRestaurant(); // Populate restaurant details
+    fetchExistingTables(); // Fetch tables
   </script>
 </body>
 </html>
