@@ -214,6 +214,7 @@
       <h2>Tables</h2>
       <div class="add-table-form">
         <input type="number" id="table_seats" placeholder="Number of seats" min="1" required>
+        <input type="number" id="table_num" placeholder="Table Number" min="1" required>
         <button onclick="addTable()">Add Table</button>
       </div>
       <div class="table-list" id="table_list"></div>
@@ -293,16 +294,18 @@
         .map(
           (table) =>
             `<div class="table-item" id="table_${table.tableID}">
-              <span>Table ${table.tableID}</span>
+              <span>Table Number: ${table.tableNum}</span>
               <span>Seats: ${table.numSeats}</span>
-              <button onclick="removeTable(${table.tableID})">Remove</button>
+              <button onclick="removeTable(${table.tableNum})">Remove</button>
             </div>`
         )
         .join('');
     }
 
     async function addTable() {
+      const tableNum = parseInt(document.getElementById('table_num').value, 10);
       const numSeats = parseInt(document.getElementById('table_seats').value, 10);
+
       const errorDiv = document.getElementById('error_message');
       errorDiv.textContent = '';
 
@@ -311,9 +314,15 @@
         return;
       }
 
-      if (!numSeats || !restaurantAddress) {
+      if (!tableNum ||!numSeats || !restaurantAddress) {
         errorDiv.textContent = 'Please enter the number of seats and ensure you are logged in.';
         return;
+      }
+
+      const tableExists = tables.some((table) => table.tableNum === tableNum);
+          if (tableExists) {
+          errorDiv.textContent = `Table number ${tableNum} already exists for this restaurant.`;
+          return;
       }
 
       try {
@@ -324,6 +333,7 @@
           },
           body: JSON.stringify({
             numSeats: numSeats,
+            tableNum: tableNum,
             restaurantID: restaurantAddress,
           }),
         });
@@ -335,6 +345,7 @@
           // Fetch the updated list of tables
           fetchExistingTables();
           document.getElementById('table_seats').value = '';
+          document.getElementById('table_seats').value = '';
         } else {
           errorDiv.textContent = data.error || 'An error occurred while adding the table.';
         }
@@ -344,16 +355,16 @@
       }
     }
 
-    async function removeTable(tableID) {
+    async function removeTable(tableNum) {
       const errorDiv = document.getElementById('error_message');
       errorDiv.textContent = '';
 
-      if (!restaurantAddress || !tableID) {
+      if (!restaurantAddress || !tableNum) {
         errorDiv.textContent = 'Invalid request. Restaurant address or Table ID missing.';
         return;
       }
 
-      const confirmDelete = confirm(`Are you sure you want to remove Table ${tableID}?`);
+      const confirmDelete = confirm(`Are you sure you want to remove Table ${tableNum}?`);
       if (!confirmDelete) {
         return;
       }
@@ -365,7 +376,7 @@
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            tableID: tableID,
+            tableNum: tableNum,
             restaurantID: restaurantAddress,
           }),
         });
@@ -373,9 +384,9 @@
         const data = await response.json();
 
         if (response.status === 200) {
-          alert(`Table ${tableID} removed successfully!`);
+          alert(`Table ${tableNum} removed successfully!`);
           // Remove the table from the local array and re-render
-          tables = tables.filter((table) => table.tableID !== tableID);
+          tables = tables.filter((table) => table.tableNum !== tableNum);
           renderTables();
         } else {
           errorDiv.textContent = data.error || `Failed to remove Table ${tableID}.`;
