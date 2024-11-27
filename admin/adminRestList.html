@@ -139,6 +139,7 @@
 
     <script>
         const apiEndpoint = 'https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/AdministratorList';
+        const deleteApiEndpoint = 'https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/adminDeleteRestaurant';
 
         // Fetch restaurants and populate the page
         async function fetchRestaurants() {
@@ -159,7 +160,6 @@
 
             restaurants.forEach((restaurant, index) => {
                 const isActive = restaurant.isActive === 1 ? 'active' : 'inactive';
-                const statusColor = restaurant.isActive === 1 ? 'green' : 'red';
 
                 const restaurantCard = `
                     <div class="restaurant">
@@ -170,7 +170,7 @@
                         <p class="address">Address: ${restaurant.address}</p>
                         <div class="actions">
                             <button class="view-button" onclick="viewRestaurant(${index})">View Restaurant</button>
-                            <button class="delete-button" onclick="deleteRestaurant(${index}, '${restaurant.restaurantName}')">Delete Restaurant</button>
+                            <button class="delete-button" onclick="deleteRestaurant('${restaurant.address}', '${restaurant.restaurantName}')">Delete Restaurant</button>
                         </div>
                     </div>
                 `;
@@ -179,12 +179,30 @@
         }
 
         // Handle delete button click
-        async function deleteRestaurant(index, name) {
-            const confirmation = confirm(`Are you sure you want to delete ${name}?`);
-            if (confirmation) {
-                alert(`Delete API for Restaurant ${index} is not yet implemented.`);
-                // Example DELETE request here
-                // await fetch(`https://api.example.com/restaurants/${id}`, { method: 'DELETE' });
+        async function deleteRestaurant(address, name) {
+            const confirmation = confirm(`Are you sure you want to delete the restaurant "${name}"?`);
+            if (!confirmation) return;
+
+            try {
+                const response = await fetch(deleteApiEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ address }),
+                });
+
+                const result = await response.json();
+
+                if (response.status === 200) {
+                    alert(result.message || `Restaurant "${name}" deleted successfully.`);
+                    fetchRestaurants(); // Refresh the list
+                } else {
+                    alert(result.error || 'Failed to delete the restaurant.');
+                }
+            } catch (error) {
+                console.error('Error deleting restaurant:', error);
+                alert('An error occurred while deleting the restaurant.');
             }
         }
 

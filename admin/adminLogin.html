@@ -13,7 +13,7 @@
         }
         header {
             background-color: #333;
-            color: #fff; /* Keep header text white */
+            color: #fff;
             padding: 10px 20px;
             display: flex;
             align-items: center;
@@ -32,7 +32,7 @@
             margin: 0;
             font-size: 20px;
             font-weight: bold;
-            color: #fff; /* Explicit white color for Tables4u */
+            color: #fff;
         }
         .header-title .subtitle {
             margin: 0;
@@ -62,7 +62,7 @@
         }
         .form-title {
             text-align: center;
-            color: #333; /* Ensure distinct black color for Admin Login */
+            color: #333;
             margin-bottom: 20px;
         }
         form {
@@ -120,7 +120,7 @@
         <form id="loginForm" onsubmit="handleLogin(event)">
             <div class="error" id="error"></div>
             <label for="email">Email</label>
-            <input type="email" id="email" placeholder="Enter your email" required>
+            <input type="text" id="email" placeholder="Enter your username" required>
             <label for="password">Password</label>
             <input type="password" id="password" placeholder="Enter your password" required>
             <button type="submit">Login</button>
@@ -143,19 +143,35 @@
             window.location.href = '/restaurant/login';
         }
 
-        function handleLogin(event) {
+        async function handleLogin(event) {
             event.preventDefault(); // Prevent the form from submitting
 
-            const email = document.getElementById('email').value;
+            const username = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
-            // Mock validation (replace with actual backend authentication)
-            if (email === 'admin@example.com' && password === 'password') {
-                alert('Login successful!');
-                window.location.href = '/admin/restaurants'; // Redirect to the admin restaurant list page
-            } else {
-                const errorDiv = document.getElementById('error');
-                errorDiv.textContent = 'Invalid email or password.';
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = ''; // Clear any previous error message
+
+            try {
+                const response = await fetch('https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/loginAdministrator', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password }),
+                });
+
+                const data = await response.json();
+
+                if (response.status === 200) {
+                    alert('Login successful!');
+                    window.location.href = 'http://127.0.0.1:5500/admin/AdminRestList.HTML'; // Redirect to admin restaurant list
+                } else {
+                    errorDiv.textContent = data; // Display error message from server
+                }
+            } catch (error) {
+                errorDiv.textContent = 'An error occurred. Please try again later.';
+                console.error('Error during login:', error);
             }
         }
     </script>
