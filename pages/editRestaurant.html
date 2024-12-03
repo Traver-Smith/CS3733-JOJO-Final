@@ -340,14 +340,16 @@
 
         const data = await response.json();
 
-        if (response.status === 200) {
+        console.log("hi"+ data.statusCode);
+
+        if (data.statusCode === 200) {
           alert('Table added successfully!');
           // Fetch the updated list of tables
           fetchExistingTables();
           document.getElementById('table_seats').value = '';
           document.getElementById('table_seats').value = '';
         } else {
-          errorDiv.textContent = data.error || 'An error occurred while adding the table.';
+          errorDiv.textContent = data.errorMessage || 'An error occurred while adding the table.';
         }
       } catch (error) {
         console.error('Error adding table:', error);
