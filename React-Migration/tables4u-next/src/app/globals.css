@@ -1,0 +1,126 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}*/
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f9f9f9;
+}
+header {
+  background-color: #333;
+  color: #fff;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.header-left, .header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.header-title {
+  flex-grow: 1;
+  text-align: center;
+}
+.header-title h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: bold;
+}
+.header-title h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: normal;
+  color: #ccc;
+}
+button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #0056b3;
+}
+.container {
+  max-width: 800px;
+  margin: 20px auto;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.filter {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.filter label {
+  font-size: 16px;
+  margin-right: 10px;
+}
+.filter input, .filter select {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+.restaurant {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #fdfdfd;
+}
+.restaurant-details {
+  flex-grow: 1;
+}
+.restaurant img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+  background-color: #eee;
+  float: left;
+}
+.restaurant h3 {
+  margin: 0;
+  font-size: 18px;
+}
+.restaurant p {
+  margin: 5px 0 0;
+  font-size: 14px;
+  color: #555;
+}
+.restaurant button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+.restaurant button:hover {
+  background-color: #0056b3;
+}
