@@ -176,7 +176,7 @@
                             <h3>${restaurant.restaurantName}</h3>
                             <p>${restaurant.Address}</p>
                         </div>
-                        <button onclick="viewReservations(${index})">View Reservations</button>
+                        <button onclick="viewReservations('${restaurant.Address}', '${restaurant.restaurantName}')">View Reservations</button>
                     </div>
                 `;
                 restaurantList.innerHTML += restaurantCard;
@@ -184,10 +184,13 @@
         }
 
         // View reservations for a restaurant
-        function viewReservations(index) {
-            alert(`Viewing reservations for restaurant index ${index}`);
-            // Add logic for redirecting or displaying reservations
+        function viewReservations(address, username) {
+            sessionStorage.setItem('restaurantAddress', address); // Save the restaurant's address
+            sessionStorage.setItem('restaurantUsername', username);
+            window.location.href = 'viewReservations.html'; // Redirect to the new reservations page
+          
         }
+
 
         // Redirects for header buttons
         function makeReservation() {
