@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import styles from './styles.module.css';
+import ViewReservations from '../view-reservations/page';
 
 interface Restaurant {
   restaurantName: string;
@@ -57,26 +58,7 @@ export default function UserRestaurantList() {
 
   return (
     <div className={styles.pageContainer}>
-      {/* Header */}
-      <header className={styles.header}>
-        <div className={styles.headerLeft}>
-          <Link href="/make-reservation">
-            <button className={styles.button}>Make a Reservation</button>
-          </Link>
-        </div>
-        <div className={styles.headerTitle}>
-          <h1>Tables4u</h1>
-          <h2 className={styles.subtitle}>List of Restaurants</h2>
-        </div>
-        <div className={styles.headerRight}>
-          <Link href="/admin/login">
-            <button className={styles.button}>Admin Login</button>
-          </Link>
-          <Link href="/restaurant/login">
-            <button className={styles.button}>Restaurant Login/Create</button>
-          </Link>
-        </div>
-      </header>
+      
 
       {/* Filters */}
       <div className={styles.container}>
@@ -129,9 +111,7 @@ export default function UserRestaurantList() {
                 <p>{restaurant.Address}</p>
               </div>
               <button
-                onClick={() =>
-                  alert(`Viewing reservations for ${restaurant.restaurantName}`)
-                }
+                onClick={() => ViewReservations()}
                 className={styles.button}
               >
                 View Reservations

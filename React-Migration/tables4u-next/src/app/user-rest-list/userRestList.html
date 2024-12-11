@@ -187,7 +187,7 @@
         function viewReservations(address, username) {
             sessionStorage.setItem('restaurantAddress', address); // Save the restaurant's address
             sessionStorage.setItem('restaurantUsername', username);
-            window.location.href = 'viewReservations.html'; // Redirect to the new reservations page
+            window.location.href = 'view-reservations'; // Redirect to the new reservations page
           
         }
 
@@ -236,7 +236,7 @@
             alert(`Filtering restaurants for ${selectedDate} at ${selectedTime}`);
         }
         function makeReservation() {
-        window.location.href = 'makeReservation.html';
+        window.location.href = 'view-reservations/viewReservation.tsx';
         }
 
         function adminLogin() {

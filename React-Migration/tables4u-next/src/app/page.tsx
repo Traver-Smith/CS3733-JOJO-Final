@@ -1,19 +1,27 @@
 'use client';
 
-import React from 'react'
+import React, {useState, useEffect}from 'react'
 //import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import UserRestaurantList from "./user-rest-list/page"
 
 import styles from "./layout.module.css";
+
+
   
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const [currentPage, setCurrentPage] = useState<string>("home");
+  const handleNavigation = (page: string) => {
+    setCurrentPage(page);
+  };
+
   return (
     <html lang="en">
       <body>
         <header className={styles.header}>
           <div className={styles.headerLeft}>
-            <button onClick={() => window.location.href = "/view-reservations"}>
+            <button onClick={() => handleNavigation("userRestaurantList")}>
               Make a Reservation
             </button>
           </div>
@@ -26,7 +34,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <button onClick={() => (window.location.href = "/ownerLogin")}>Restaurant Login</button>
           </div>
         </header>
-        <main>{children}</main>
+        <main>
+          {currentPage === 'home' && children}
+          {currentPage === "userRestaurantList" && <UserRestaurantList />}
+        </main>
       </body>
     </html>
   );

@@ -1,0 +1,104 @@
+/* General Page Layout */
+.pageContainer {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Header Styles */
+  .header {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .headerTitle {
+    text-align: center;
+    flex-grow: 1;
+  }
+  
+  .restaurantNameDisplay {
+    text-align: center;
+    margin-top: 10px;
+    color: #555;
+  }
+  
+  /* Container and Accordion */
+  .container {
+    max-width: 800px;
+    margin: 20px auto;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .accordion {
+    margin: 10px 0;
+  }
+  
+  .accordionHeader {
+    cursor: pointer;
+    padding: 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .accordionHeader:hover {
+    background-color: #0056b3;
+  }
+  
+  .accordionContent {
+    display: none;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-top: none;
+    background-color: #f9f9f9;
+  }
+  
+  /* Table Item Styles */
+  .tableItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #fdfdfd;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .tableItem span {
+    font-size: 14px;
+  }
+  
+  .tableItem input {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 10px;
+  }
+  
+  .tableItem button {
+    padding: 8px 12px;
+    font-size: 14px;
+    color: white;
+    background-color: #28a745;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .tableItem button:hover {
+    background-color: #218838;
+  }
