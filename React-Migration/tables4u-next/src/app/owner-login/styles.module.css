@@ -1,5 +1,5 @@
 /* General Page Styling */
-body {
+.body {
     font-family: Arial, sans-serif;
     background-color: #f9f9f9;
     margin: 0;
@@ -43,7 +43,7 @@ body {
 }
 
 /* Buttons */
-button {
+.button {
     background-color: #007bff;
     color: #fff;
     border: none;
@@ -53,7 +53,7 @@ button {
     cursor: pointer;
 }
 
-button:hover {
+.button:hover {
     background-color: #0056b3;
 }
 
@@ -83,18 +83,18 @@ button:hover {
 }
 
 /* Form Inputs */
-form {
+.form {
     display: flex;
     flex-direction: column;
 }
 
-label {
+.label {
     font-size: 14px;
     color: #555;
     margin-bottom: 5px;
 }
 
-input {
+.input {
     padding: 10px;
     font-size: 14px;
     border: 1px solid #ddd;
@@ -102,7 +102,7 @@ input {
     margin-bottom: 15px;
 }
 
-button[type='submit'] {
+.button[type='submit'] {
     padding: 10px;
     font-size: 16px;
     background-color: #007bff;
@@ -112,7 +112,7 @@ button[type='submit'] {
     cursor: pointer;
 }
 
-button[type='submit']:hover {
+.button[type='submit']:hover {
     background-color: #0056b3;
 }
 

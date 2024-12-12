@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import styles from './styles.module.css';
 import ViewReservations from '../view-reservations/page';
+import { NavigationProvider, useNavigation } from "../NavigationContext";
 
 interface Restaurant {
   restaurantName: string;
@@ -11,6 +12,7 @@ interface Restaurant {
 }
 
 export default function UserRestaurantList() {
+  const { setCurrentPage } = useNavigation();
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
@@ -19,6 +21,8 @@ export default function UserRestaurantList() {
   useEffect(() => {
     fetchRestaurants();
   }, []);
+  
+  
 
   const fetchRestaurants = async () => {
     const apiEndpoint = 'https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/ConsumerList';
@@ -55,6 +59,12 @@ export default function UserRestaurantList() {
   if (loading) {
     return <p>Loading...</p>;
   }
+
+  const doAll = (restaurantName: string, restaurantAddress: string) => {
+    sessionStorage.setItem('restaurantUsername', restaurantName)
+    sessionStorage.setItem('restaurantAddress', restaurantAddress )
+    setCurrentPage("viewReservations") 
+  };
 
   return (
     <div className={styles.pageContainer}>
@@ -111,7 +121,7 @@ export default function UserRestaurantList() {
                 <p>{restaurant.Address}</p>
               </div>
               <button
-                onClick={() => ViewReservations()}
+                onClick={() => doAll(restaurant.restaurantName, restaurant.Address)}
                 className={styles.button}
               >
                 View Reservations

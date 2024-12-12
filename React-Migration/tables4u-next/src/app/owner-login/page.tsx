@@ -44,19 +44,7 @@ export default function RestaurantLogin() {
 
     return (
         <div>
-            <header className={styles.header}>
-                <div className={styles.headerLeft}>
-                    <button onClick={() => router.push('/make-reservation')}>Make a Reservation</button>
-                </div>
-                <div className={styles.headerTitle}>
-                    <h1 className={styles.mainTitle}>Tables4u</h1>
-                    <h2 className={styles.subtitle}>Restaurant Login</h2>
-                </div>
-                <div className={styles.headerRight}>
-                    <button onClick={() => router.push('/admin/login')}>Admin Login</button>
-                    <button onClick={() => router.push('/restaurant/login')}>Restaurant Login</button>
-                </div>
-            </header>
+            
             <div className={styles.container}>
                 <h1 className={styles.formTitle}>Restaurant Owner Login</h1>
                 <form className={styles.form} onSubmit={handleLogin}>

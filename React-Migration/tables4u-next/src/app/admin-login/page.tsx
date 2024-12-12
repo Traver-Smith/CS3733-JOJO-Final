@@ -40,27 +40,12 @@ export default function AdminLogin() {
 
   return (
     <div>
-      <header className={styles.header}>
-        <div className={styles.headerLeft}>
-          <button onClick={() => (window.location.href = "/make-reservation")}>
-            Make a Reservation
-          </button>
-        </div>
-        <div className={styles.headerTitle}>
-          <h1 className={styles.mainTitle}>Tables4u</h1>
-          <h2 className={styles.subtitle}>Admin Login</h2>
-        </div>
-        <div className={styles.headerRight}>
-          <button onClick={() => (window.location.href = "/adminLogin")}>Admin Login</button>
-          <button onClick={() => (window.location.href = "/ownerLogin")}>Restaurant Login</button>
-        </div>
-      </header>
       <div className={styles.container}>
         <h1 className={styles.formTitle}>Admin Login</h1>
-        <form onSubmit={handleLogin}>
+        <form className={styles.form} onSubmit={handleLogin}>
           {error && <div className={styles.error}>{error}</div>}
           <label htmlFor="email">Email</label>
-          <input type="text" id="email" name="email" placeholder="Enter your username" required />
+          <input type="text" id="email" name="email" placeholder="Enter your email" required />
           <label htmlFor="password">Password</label>
           <input type="password" id="password" name="password" placeholder="Enter your password" required />
           <button type="submit">Login</button>
