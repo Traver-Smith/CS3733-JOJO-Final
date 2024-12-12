@@ -1,14 +1,18 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import styles from './styles.module.css';
+import { useNavigation } from '../NavigationContext'; // Adjust the import path as needed
 
 export default function RestaurantLogin() {
     const [address, setAddress] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const router = useRouter();
+    const { setCurrentPage } = useNavigation();
+
+    const navigateTo = (page: string) => {
+        setCurrentPage(page);
+    };
 
     const handleLogin = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -31,8 +35,8 @@ export default function RestaurantLogin() {
                 sessionStorage.setItem('restaurantUsername', address);
                 sessionStorage.setItem('restaurantPassword', password);
 
-                // Redirect to the edit restaurant page
-                router.push('/edit-restaurant');
+                // Instead of router.push('/edit-restaurant'), use our navigation context
+                navigateTo('createRestaurant');
             } else {
                 setError(data.error || 'Invalid address or password.');
             }
@@ -44,7 +48,6 @@ export default function RestaurantLogin() {
 
     return (
         <div>
-            
             <div className={styles.container}>
                 <h1 className={styles.formTitle}>Restaurant Owner Login</h1>
                 <form className={styles.form} onSubmit={handleLogin}>
@@ -68,10 +71,11 @@ export default function RestaurantLogin() {
                         required
                     />
                     <button type="submit">Login</button>
+                    {/* Instead of router.push('/restaurant/create'), use the navigation context */}
                     <button
                         type="button"
                         className={styles.secondaryButton}
-                        onClick={() => router.push('/restaurant/create')}
+                        onClick={() => navigateTo('createRestaurant')}
                     >
                         Create Restaurant
                     </button>

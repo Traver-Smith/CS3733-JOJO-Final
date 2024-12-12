@@ -8,6 +8,7 @@ import "./globals.css";
 import UserRestaurantList from "./user-rest-list/page"
 import ViewReservations from "./view-reservations/page"
 import RestaurantLogin from "./owner-login/page"
+import CreateRestaurant from "./create-rest/page";
 
 import styles from "./layout.module.css";
 import AdminLogin from "./admin-login/page";
@@ -55,6 +56,7 @@ function LayoutWithNavigation({ children }: { children: React.ReactNode }) {
           {currentPage === "viewReservations" && <ViewReservations />}
           {currentPage === "restaurantLogin" && <RestaurantLogin />}
           {currentPage === "adminLogin" && <AdminLogin />}
+          {currentPage === "createRestaurant" && <CreateRestaurant />}
         </main>
       </body>
     </html>
