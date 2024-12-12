@@ -86,18 +86,23 @@ export default function ViewReservations() {
     
   ) => {
     const emailInput = document.getElementById(
-      'email_${tableID}_${reserveTime}'
+      `email_${tableID}_${reserveTime}`
     ) as HTMLInputElement;
 
     const numPeopleInput = document.getElementById(
-      'numPeople_${tableID}_${reserveTime}'
+      `numPeople_${tableID}_${reserveTime}`
     ) as HTMLInputElement;
     
     if (!emailInput) {
       alert("Please enter an email.");
       return;
     }
-
+    console.log(emailInput.value)
+    console.log(restaurantAddress)
+    console.log(tableNum)
+    console.log(reserveTime)
+    console.log(selectedDate)
+    console.log(numPeopleInput.value)
     try {
       const response = await fetch(
         "https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/makeReservation",
@@ -110,7 +115,7 @@ export default function ViewReservations() {
             tableNum,
             reserveTime,
             reserveDate: selectedDate,
-            numPeople: numPeopleInput.value,
+            numPeople: parseInt(numPeopleInput.value)
           }),
         }
       );
