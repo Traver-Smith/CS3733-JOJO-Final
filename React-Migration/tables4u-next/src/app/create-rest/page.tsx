@@ -56,7 +56,7 @@ export default function CreateRestaurant() {
 
     return (
         <div>
-        
+
             <div className={styles.container}>
                 <h1 className={styles.formTitle}>Create Restaurant</h1>
                 <form

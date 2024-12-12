@@ -1,49 +1,161 @@
-/* General Styling */
-body {
+.body {
     font-family: Arial, sans-serif;
     background-color: #f9f9f9;
     margin: 0;
     padding: 0;
-}
-
-.header {
-    background-color: #333;
-    color: #fff;
-    padding: 10px 20px;
+  }
+  
+  .container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+  }
+  
+  .header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .header h1 {
+    font-size: 2.5rem;
+    margin: 0;
+  }
+  
+  .header p {
+    font-size: 1.2rem;
+    color: #666;
+  }
+  
+  .section {
+    background: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    box-sizing: border-box;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+  
+  .section textarea,
+  .section select,
+  .section input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+  }
+  
+  .daysOfWeek {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .daysOfWeek label {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-}
-
-.headerLeft,
-.headerRight {
+    justify-content: center;
+    font-size: 1rem;
+    gap: 5px;
+  }
+  
+  .daysOfWeek input[type="checkbox"] {
+    margin: 0;
+    width: 16px;
+    height: 16px;
+  }
+  
+  .tableItem {
     display: flex;
     align-items: center;
     gap: 10px;
-}
-
-.headerTitle {
-    flex-grow: 1;
-    text-align: center;
-}
-
-.mainTitle {
-    margin: 0;
-    font-size: 20px;
+    margin-bottom: 10px;
+  }
+  
+  .tableItem span {
+    flex: 1;
     font-weight: bold;
-}
-
-.subtitle {
-    margin: 0;
+  }
+  
+  .tableItem button {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
     font-size: 14px;
-    color: #ccc;
-}
-
-/* Section */
-.section {
-    margin-bottom: 20px;
-    padding: 20px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+    cursor: pointer;
+  }
+  
+  .tableItem button:hover {
+    background-color: #c82333;
+  }
+  
+  .addTableForm {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .publishBtn,
+  .activateBtn {
+    text-align: center;
+    margin-top: 30px;
+  }
+  
+  .publishBtn button,
+  .activateBtn button {
+    background-color: #28a745;
+    color: white;
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px;
+  }
+  
+  .publishBtn button:hover,
+  .activateBtn button:hover {
+    background-color: #218838;
+  }
+  
+  .error {
+    color: #dc3545;
+    font-size: 14px;
+    margin-top: 10px;
+    text-align: center;
+  }
+  
+  /* Disable input styles */
+  .disabled {
+    background-color: #e9ecef !important;
+    pointer-events: none !important;
+    opacity: 0.7;
+  }
+  
+  .button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
+  .button:hover {
+    background-color: #0056b3;
+  }
+  
+  .tableList p {
+    margin: 0;
+  }

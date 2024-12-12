@@ -35,19 +35,23 @@ export default function RestaurantLogin() {
                 sessionStorage.setItem('restaurantUsername', address);
                 sessionStorage.setItem('restaurantPassword', password);
 
-                // Instead of router.push('/edit-restaurant'), use our navigation context
-                navigateTo('createRestaurant');
+                // Redirect to the edit restaurant page (adjust this key as needed)
+                navigateTo('editRestaurant');
             } else {
                 setError(data.error || 'Invalid address or password.');
             }
-        } catch (error) {
+        } catch (err) {
             setError('An error occurred. Please try again later.');
-            console.error('Error during login:', error);
+            console.error('Error during login:', err);
         }
     };
 
+    // Optional: If you want the same header with navigation buttons,
+    // you can include it here. Adjust 'navigateTo' arguments as needed.
     return (
         <div>
+
+
             <div className={styles.container}>
                 <h1 className={styles.formTitle}>Restaurant Owner Login</h1>
                 <form className={styles.form} onSubmit={handleLogin}>
@@ -71,7 +75,7 @@ export default function RestaurantLogin() {
                         required
                     />
                     <button type="submit">Login</button>
-                    {/* Instead of router.push('/restaurant/create'), use the navigation context */}
+                    
                     <button
                         type="button"
                         className={styles.secondaryButton}

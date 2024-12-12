@@ -12,6 +12,7 @@ import CreateRestaurant from "./create-rest/page";
 
 import styles from "./layout.module.css";
 import AdminLogin from "./admin-login/page";
+import EditRestaurant from "./edit-rest/page";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -57,6 +58,7 @@ function LayoutWithNavigation({ children }: { children: React.ReactNode }) {
           {currentPage === "restaurantLogin" && <RestaurantLogin />}
           {currentPage === "adminLogin" && <AdminLogin />}
           {currentPage === "createRestaurant" && <CreateRestaurant />}
+          {currentPage === "editRestaurant" && <EditRestaurant />}
         </main>
       </body>
     </html>
