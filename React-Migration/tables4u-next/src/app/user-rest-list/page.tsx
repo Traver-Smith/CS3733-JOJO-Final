@@ -63,7 +63,8 @@ export default function UserRestaurantList() {
   const doAll = (restaurantName: string, restaurantAddress: string) => {
     sessionStorage.setItem('restaurantUsername', restaurantName)
     sessionStorage.setItem('restaurantAddress', restaurantAddress )
-    setCurrentPage("viewReservations") 
+    //setCurrentPage("viewReservations") 
+    window.location.href = "/view-reservations"
   };
 
   return (
