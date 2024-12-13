@@ -9,6 +9,7 @@ interface TableData {
   numSeats: number;
   hour: string;
   hasReservation: boolean;
+  reservationID?: number;
 }
 
 interface HourData {
@@ -23,9 +24,13 @@ export default function AdminAvailabilityReport() {
   const [availabilityData, setAvailabilityData] = useState<HourData[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [selectedReservation, setSelectedReservation] = useState<number | null>(null);
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
 
   const apiEndpoint =
     "https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/adminReport";
+  const cancelReservationEndpoint =
+    "https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage1/adminDeleteReservation";
 
   const fetchAvailability = async () => {
     if (!restaurantResID || !reserveDate) {
@@ -57,6 +62,39 @@ export default function AdminAvailabilityReport() {
       setError(error.message || "An unexpected error occurred.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCancelReservation = async () => {
+    if (!selectedReservation) {
+      alert("No reservation selected to cancel.");
+      return;
+    }
+  
+    console.log("Attempting to cancel reservation ID:", selectedReservation);
+  
+    try {
+      const response = await fetch(cancelReservationEndpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reservationID: selectedReservation }),
+      });
+  
+      console.log("Response status:", response.status); // Debugging
+      const result = await response.json();
+      console.log("Response body:", result); // Debugging
+  
+      if (response.ok) {
+        alert(result.message || "Reservation cancelled successfully.");
+        setIsCancelModalOpen(false);
+        setSelectedReservation(null);
+        fetchAvailability(); // Refresh availability
+      } else {
+        alert(result.message || "Failed to cancel the reservation.");
+      }
+    } catch (error: any) {
+      console.error("Error cancelling reservation:", error);
+      alert("An unexpected error occurred while cancelling the reservation.");
     }
   };
 
@@ -112,7 +150,7 @@ export default function AdminAvailabilityReport() {
 
         {error && <p className={styles.error}>Error: {error}</p>}
 
-        {availabilityData && (
+        {availabilityData && availabilityData.length > 0 && (
           <div className={styles.results}>
             <h2>Availability Report for {reserveDate}</h2>
             <table className={styles.tableAvailability}>
@@ -131,11 +169,20 @@ export default function AdminAvailabilityReport() {
                     <td>{hourData.hour.split("T")[1].slice(0, 5)}</td>
                     {hourData.tables.map((table) => (
                       <td key={table.tableID}>
-                        {table.hasReservation ? (
-                          <span className={styles.reserved}>Booked</span>
-                        ) : (
-                          <span className={styles.available}>Available</span>
-                        )}
+                      {table.hasReservation ? (
+                        <button
+                          className={styles.reservedButton}
+                          onClick={() => {
+                            console.log("Selected reservation ID:", table.reservationID); // Debugging log
+                            setSelectedReservation(table.reservationID || null);
+                            setIsCancelModalOpen(true);
+                          }}
+                        >
+                          Booked
+                        </button>
+                      ) : (
+                        <span className={styles.available}>Available</span>
+                      )}
                       </td>
                     ))}
                     <td>{hourData.restaurantUtilization}</td>
@@ -143,6 +190,29 @@ export default function AdminAvailabilityReport() {
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {isCancelModalOpen && (
+          <div className={styles.modal}>
+            <div className={styles.modalContent}>
+              <h2>Cancel Reservation</h2>
+              <p>Are you sure you want to cancel this reservation?</p>
+              <div className={styles.modalActions}>
+                <button
+                  onClick={handleCancelReservation}
+                  className={styles.redButton}
+                >
+                  Confirm
+                </button>
+                <button
+                  onClick={() => setIsCancelModalOpen(false)}
+                  className={styles.cancelButton}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
