@@ -1,0 +1,63 @@
+import mysql from 'mysql2/promise';
+
+export const handler = async (event) => {
+  const dbConfig = {
+    host: 'tables4u.clsi6iokwrcx.us-east-2.rds.amazonaws.com',
+    user: 'admin',
+    password: 'jojosiwa',
+    database: 'tablesApp',
+  };
+
+  let connection;
+
+  try {
+    // Parse the input from the event body
+    const { searchDate } = event;
+
+    // Validate input
+    if (!searchDate) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ message: 'searchDate is required.' }),
+      };
+    }
+
+    // Connect to the database
+    connection = await mysql.createConnection(dbConfig);
+
+    // Query for restaurants that are not closed on the specified date
+    const query = `
+      SELECT r.address, r.restaurantName, r.openTime, r.closeTime
+      FROM Restaurant r
+      WHERE r.isActive = 1
+      AND r.address NOT IN (
+        SELECT c.restaurantClosedID
+        FROM ClosedDays c
+        WHERE c.closedDays = ?
+      )
+    `;
+
+    const [rows] = await connection.execute(query, [searchDate]);
+
+    // Return the list of available restaurants
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        message: 'Available restaurants fetched successfully.',
+        availableRestaurants: rows,
+      }),
+    };
+  } catch (error) {
+    console.error('Error fetching available restaurants:', error);
+
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: 'Failed to fetch available restaurants.', error: error.message }),
+    };
+  } finally {
+    if (connection) {
+      await connection.end();
+    }
+  }
+};
+
