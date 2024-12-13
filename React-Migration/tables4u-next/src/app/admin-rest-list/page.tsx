@@ -74,6 +74,26 @@ export default function AdminRestaurantList() {
           <button onClick={() => (window.location.href = "/ownerLogin")}>Restaurant Login</button>
         </div>
       </header>
+      
+      <div className={styles.container}>
+      {/* Button Box */}
+      <div className={styles.restaurantList}>
+        <h1>Admin Restaurant List</h1>
+        {/* Render restaurant data here */}
+      </div>
+      <div className={styles.buttonBox}>
+        <button
+          className={styles.reportButton}
+          onClick={() => window.location.href = '/admin-report'}
+        >
+          Availability Report
+        </button>
+      </div>
+
+      {/* Restaurant List */}
+
+    </div>
+      
       <div className={styles.container}>
         {restaurants.map((restaurant, index) => (
           <div key={index} className={styles.restaurant}>
