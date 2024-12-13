@@ -128,6 +128,42 @@
     background-color: #218838;
   }
   
+
+  .redButton {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    margin-right: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .redButton:hover {
+    background-color: #a71d2a;
+  }
+  
+  .greenButton {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .greenButton:hover {
+    background-color: #218838;
+  }
+  
+  .closedDaysList ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .closedDaysList li {
+    margin: 5px 0;
+  }
   .error {
     color: #dc3545;
     font-size: 14px;

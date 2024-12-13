@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import styles from './styles.module.css';
 import { useNavigation } from '../NavigationContext'; // Adjust the import path as needed
-
 export default function RestaurantLogin() {
     const [address, setAddress] = useState('');
     const [password, setPassword] = useState('');
@@ -73,12 +72,12 @@ export default function RestaurantLogin() {
                         placeholder="Enter your password"
                         required
                     />
-                    <button type="submit">Login</button>
+                    <button type="submit">Login</button>    
                     
                     <button
                         type="button"
                         className={styles.secondaryButton}
-                        onClick={() => navigateTo('createRestaurant')}
+                        onClick={() => window.location.href = "/create-rest"}
                     >
                         Create Restaurant
                     </button>

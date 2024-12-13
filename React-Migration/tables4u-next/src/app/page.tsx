@@ -12,6 +12,7 @@ import styles from './layout.module.css';
 import { NavigationProvider, useNavigation } from './NavigationContext';
 import OwnerLogin from './owner-login/page';
 import CreateRestaurant from './create-rest/page';
+import UserReservationLookup from './user-reservations/page';
 
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -40,6 +41,9 @@ function LayoutWithNavigation({ children }: { children: React.ReactNode }) {
           <button onClick={() => navigateTo('userRestaurantList')}>
             Make a Reservation
           </button>
+          <button onClick={() => navigateTo('UserReservationLookup')}>
+            Lookup Reservation
+          </button>
         </div>
         <div className={styles.headerTitle}>
           <h1 className={styles.mainTitle}>Tables4u</h1>
@@ -55,7 +59,7 @@ function LayoutWithNavigation({ children }: { children: React.ReactNode }) {
         <Routes>
           <Route path="/" element={<UserRestaurantList />} />
           <Route path="/userRestaurantList" element={<UserRestaurantList />} />
-          <Route path="/viewReservations" element={<ViewReservations />} />
+          <Route path="/UserReservationLookup" element={<UserReservationLookup />} />
           <Route path="/restaurantLogin" element={<RestaurantLogin />} />
           <Route path="/adminLogin" element={<AdminLogin />} />
           <Route path="/adminReport" element={<AdminReport />} />

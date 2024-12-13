@@ -8,8 +8,10 @@ export default function UserReservationLookup() {
   const [reservations, setReservations] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState<boolean>(false);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState<boolean>(false);
   const [selectedReservation, setSelectedReservation] = useState<any>(null);
   const [confirmationCode, setConfirmationCode] = useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string>("");
 
   const handleLookup = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -34,8 +36,8 @@ export default function UserReservationLookup() {
       const result = await response.json();
 
       if (response.ok) {
-        const parsedBody = JSON.parse(result.body); // Convert `body` to an object
-        setReservations(parsedBody.data || []); // Update reservations state
+        const parsedBody = JSON.parse(result.body);
+        setReservations(parsedBody.data || []);
       } else {
         setError(result.error || "Could not find reservation. Please try again.");
       }
@@ -58,12 +60,17 @@ export default function UserReservationLookup() {
     setConfirmationCode("");
   };
 
+  const closeSuccessModal = () => {
+    setIsSuccessModalOpen(false);
+    setSuccessMessage("");
+  };
+
   const handleCancelReservation = async () => {
     if (!confirmationCode.trim()) {
       setError("Confirmation code is required to cancel the reservation.");
       return;
     }
-
+  
     try {
       const response = await fetch(
         "https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/CancelReservation",
@@ -76,22 +83,32 @@ export default function UserReservationLookup() {
           }),
         }
       );
-
-      const result = await response.json();
-
-      if (response.ok) {
-        setReservations((prev) =>
-          prev.filter((res) => res.reservationID !== selectedReservation.reservationID)
-        );
-        closeCancelModal();
-      } else {
-        setError(result.error || "Could not cancel the reservation. Please try again.");
+  
+      const result = await response.json(); // Call once and use below
+  
+      if (!response.ok) {
+        if (response.status === 404) {
+          setError(result.error || "Reservation not found for the given email and confirmation code.");
+          return;
+        }
+        setError(result.error || `An error occurred. Status: ${response.status}`);
+        return;
       }
+  
+      // Success case
+      const parsedBody = JSON.parse(result.body);
+      setReservations((prev) =>
+        prev.filter((res) => res.reservationID !== selectedReservation.reservationID)
+      );
+      setSuccessMessage(parsedBody.message);
+      setIsSuccessModalOpen(true);
+      closeCancelModal();
     } catch (err: any) {
       console.error("Error cancelling reservation:", err);
       setError("An unexpected error occurred. Please try again.");
     }
   };
+
 
   return (
     <div>
@@ -119,60 +136,77 @@ export default function UserReservationLookup() {
           <div style={{ marginTop: "20px" }}>
             <h2>Your Reservations</h2>
             <ul>
-            {reservations.map((res, index) => {
+              {reservations.map((res, index) => {
                 const formattedDate = new Date(res.reserveDate).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
                 });
 
                 return (
-                    <li key={index}>
+                  <li key={index}>
                     <p><strong>Reservation ID:</strong> {res.reservationID}</p>
                     <p><strong>Restaurant Address:</strong> {res.restaurantResID}</p>
                     <p><strong>Date:</strong> {formattedDate}</p>
                     <p><strong>Time:</strong> {res.reserveTime}</p>
                     <button
-                        className={`${styles.redButton} ${styles.redButton}`}
-                        onClick={() => openCancelModal(res)}
+                      className={`${styles.redButton}`}
+                      onClick={() => openCancelModal(res)}
                     >
-                        Cancel Reservation
+                      Cancel Reservation
                     </button>
                     <hr />
-                    </li>
+                  </li>
                 );
-                })}
+              })}
             </ul>
           </div>
         )}
       </div>
 
+      {/* Cancel Modal */}
       {isCancelModalOpen && (
-  <div className={styles.modal}>
-    <div className={styles.modalContent}>
-      <h2>Cancel Reservation</h2>
-      <p>
-        Please enter the confirmation code to cancel the reservation at{" "}
-        <strong>{selectedReservation.restaurantResID}</strong>.
-      </p>
-      <input
-        type="text"
-        placeholder="Confirmation Code"
-        value={confirmationCode}
-        onChange={(e) => setConfirmationCode(e.target.value)}
-        className={styles.input}
-      />
-        <div style={{ marginTop: "20px" }}>
-        <button onClick={handleCancelReservation} className={`${styles.redButton} ${styles.redButton}`}>
-            Confirm Cancellation
-        </button>
-        <button onClick={closeCancelModal} className={styles.button}>
-            Close
-        </button>
+        <div className={styles.modal}>
+          <div className={styles.modalContent}>
+            <h2>Cancel Reservation</h2>
+            <p>
+              Please enter the confirmation code to cancel the reservation at{" "}
+              <strong>{selectedReservation.restaurantResID}</strong>.
+            </p>
+            <input
+              type="text"
+              placeholder="Confirmation Code"
+              value={confirmationCode}
+              onChange={(e) => setConfirmationCode(e.target.value)}
+              className={styles.input}
+            />
+            <div style={{ marginTop: "20px" }}>
+              <button
+                onClick={handleCancelReservation}
+                className={`${styles.redButton}`}
+              >
+                Confirm Cancellation
+              </button>
+              <button onClick={closeCancelModal} className={styles.button}>
+                Close
+              </button>
+            </div>
+          </div>
         </div>
-    </div>
-  </div>
-)}
+      )}
+
+      {/* Success Modal */}
+      {isSuccessModalOpen && (
+        <div className={styles.modal}>
+          <div className={styles.modalContent}>
+            <h2>Success</h2>
+            <p>{successMessage}</p>
+            <button onClick={closeSuccessModal} className={styles.button}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

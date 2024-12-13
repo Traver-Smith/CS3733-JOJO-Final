@@ -4,46 +4,80 @@
     background-color: #f9f9f9;
     margin: 0;
     padding: 0;
-}
-
-/* Header Styling */
-.header {
+  }
+  
+  /* Header Styling */
+  .header {
     background-color: #333;
     color: #fff;
     padding: 10px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-}
-
-.headerLeft,
-.headerRight {
+  }
+  
+  .headerLeft,
+  .headerRight {
     display: flex;
     align-items: center;
     gap: 10px;
-}
-
-.headerTitle {
+  }
+  
+  .headerTitle {
     flex-grow: 1;
     text-align: center;
-}
-
-.mainTitle {
+  }
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it overlays other content */
+  }
+  
+  .modalContent {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 90%; /* Responsive width */
+    text-align: center;
+  }
+  .mainTitle {
     margin: 0;
     font-size: 20px;
     font-weight: bold;
     color: #fff;
-}
-
-.subtitle {
+  }
+  .redButton {
+    background-color: #dc3545; /* Bootstrap's Danger Red */
+    color: #fff; /* White text */
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease; /* Smooth hover effect */
+  }
+  
+  .redButton:hover {
+    background-color: #a71d2a; /* Darker red for hover effect */
+  }
+  .subtitle {
     margin: 0;
     font-size: 14px;
     font-weight: normal;
     color: #ccc;
-}
-
-/* Buttons */
-.button {
+  }
+  
+  /* Buttons */
+  .button {
     background-color: #007bff;
     color: #fff;
     border: none;
@@ -51,58 +85,58 @@
     padding: 8px 12px;
     font-size: 14px;
     cursor: pointer;
-}
-
-.button:hover {
+  }
+  
+  .button:hover {
     background-color: #0056b3;
-}
-
-.secondaryButton {
+  }
+  
+  .secondaryButton {
     margin-top: 10px;
     background-color: #28a745;
-}
-
-.secondaryButton:hover {
+  }
+  
+  .secondaryButton:hover {
     background-color: #218838;
-}
-
-/* Form Container */
-.container {
+  }
+  
+  /* Form Container */
+  .container {
     max-width: 400px;
     margin: 50px auto;
     background-color: #fff;
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.formTitle {
+  }
+  
+  .formTitle {
     text-align: center;
     color: #333;
     margin-bottom: 20px;
-}
-
-/* Form Inputs */
-.form {
+  }
+  
+  /* Form Inputs */
+  .form {
     display: flex;
     flex-direction: column;
-}
-
-.label {
+  }
+  
+  .label {
     font-size: 14px;
     color: #555;
     margin-bottom: 5px;
-}
-
-.input {
+  }
+  
+  .input {
     padding: 10px;
     font-size: 14px;
     border: 1px solid #ddd;
     border-radius: 4px;
     margin-bottom: 15px;
-}
-
-.button[type='submit'] {
+  }
+  
+  .button[type='submit'] {
     padding: 10px;
     font-size: 16px;
     background-color: #007bff;
@@ -110,16 +144,16 @@
     border: none;
     border-radius: 4px;
     cursor: pointer;
-}
-
-.button[type='submit']:hover {
+  }
+  
+  .button[type='submit']:hover {
     background-color: #0056b3;
-}
-
-/* Error Message */
-.error {
+  }
+  
+  /* Error Message */
+  .error {
     color: #dc3545;
     font-size: 14px;
     margin-bottom: 15px;
     text-align: center;
-}
+  }
