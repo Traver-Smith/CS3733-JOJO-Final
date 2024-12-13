@@ -26,7 +26,7 @@ export default function AdminLogin() {
 
       const data = await response.json();
 
-      if (response.ok) {
+      if (data.statusCode == 200) {
         alert("Login successful!");
         window.location.href = "/admin-rest-list";
       } else {
