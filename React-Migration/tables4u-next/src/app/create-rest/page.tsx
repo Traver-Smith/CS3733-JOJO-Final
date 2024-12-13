@@ -56,21 +56,7 @@ export default function CreateRestaurant() {
 
     return (
         <div>
-            <header className={styles.header}>
-                <div className={styles.headerLeft}>
-                    <button onClick={() => alert('Redirecting to Make a Reservation page...')}>
-                        Make a Reservation
-                    </button>
-                </div>
-                <div className={styles.headerTitle}>
-                    <h1 className={styles.mainTitle}>Tables4u</h1>
-                    <h2 className={styles.subtitle}>Create Restaurant</h2>
-                </div>
-                <div className={styles.headerRight}>
-                    <button onClick={() => alert('Redirecting to Admin Login')}>Admin Login</button>
-                    <button onClick={() => alert('Redirecting to Restaurant Login')}>Restaurant Login</button>
-                </div>
-            </header>
+
             <div className={styles.container}>
                 <h1 className={styles.formTitle}>Create Restaurant</h1>
                 <form
