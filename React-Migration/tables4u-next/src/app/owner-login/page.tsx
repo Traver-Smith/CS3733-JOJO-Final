@@ -46,8 +46,7 @@ export default function RestaurantLogin() {
         }
     };
 
-    // Optional: If you want the same header with navigation buttons,
-    // you can include it here. Adjust 'navigateTo' arguments as needed.
+    
     return (
         <div>
 
