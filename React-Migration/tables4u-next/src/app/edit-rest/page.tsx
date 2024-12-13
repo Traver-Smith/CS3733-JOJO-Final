@@ -29,7 +29,7 @@ export default function EditRestaurant() {
   
     try {
       const response = await fetch(
-        "https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/removeClosedDay",
+        "https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage1/removeClosedDay",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -63,7 +63,7 @@ export default function EditRestaurant() {
   
     try {
       const response = await fetch(
-        "https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/addClosedDay",
+        "https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage1/addClosedDay",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
