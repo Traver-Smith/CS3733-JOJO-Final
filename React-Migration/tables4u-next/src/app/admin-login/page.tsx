@@ -28,7 +28,7 @@ export default function AdminLogin() {
 
       if (response.ok) {
         alert("Login successful!");
-        window.location.href = "/admin-restaurant-list";
+        window.location.href = "/admin-rest-list";
       } else {
         setError(data.error || "Invalid credentials.");
       }
