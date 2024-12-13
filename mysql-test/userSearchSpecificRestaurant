@@ -1,0 +1,105 @@
+import mysql from 'mysql2/promise';
+
+export const handler = async (event) => {
+  const dbConfig = {
+    host: 'tables4u.clsi6iokwrcx.us-east-2.rds.amazonaws.com',
+    user: 'admin',
+    password: 'jojosiwa',
+    database: 'tablesApp',
+  };
+
+  let connection;
+
+  try {
+    // Validate and parse the input
+    if (!event) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ message: 'Request body is required.' }),
+      };
+    }
+
+    const { address, restaurantName, searchDate } = event;
+
+    if (!address || !restaurantName || !searchDate) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ message: 'address, restaurantName, and searchDate are required.' }),
+      };
+    }
+
+    // Connect to the database
+    connection = await mysql.createConnection(dbConfig);
+
+    // Query restaurant details (open time, close time, closed days, and active status)
+    const [restaurantRows] = await connection.execute(
+      `SELECT openTime, closeTime, closedDays, isActive FROM Restaurant WHERE address = ? AND restaurantName = ?`,
+      [address, restaurantName]
+    );
+
+    if (restaurantRows.length === 0) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify({ message: 'Restaurant not found.' }),
+      };
+    }
+
+    const restaurant = restaurantRows[0];
+
+    if (!restaurant.isActive) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ message: 'Restaurant is not active.' }),
+      };
+    }
+
+    const closedDays = restaurant.closedDays ? restaurant.closedDays.split(',') : [];
+    if (closedDays.includes(searchDate)) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ message: 'Restaurant is closed on the specified date.' }),
+      };
+    }
+
+    const openTime = restaurant.openTime;
+    const closeTime = restaurant.closeTime;
+
+    // Fetch reserved tables on the specified date
+    const [reservationRows] = await connection.execute(
+      `SELECT tableID, reserveTime FROM Reservation WHERE restaurantResID = ? AND reserveDate = ?`,
+      [address, searchDate]
+    );
+
+    // Fetch all tables in the restaurant
+    const [tableRows] = await connection.execute(
+      `SELECT tableID, numSeats, tableNum FROM Tables WHERE restaurantID = ?`,
+      [address]
+    );
+
+    // Filter out reserved tables
+    const reservedTables = new Set(
+      reservationRows.map(({ tableID }) => tableID)
+    );
+
+    const availableTables = tableRows.filter(table => !reservedTables.has(table.tableID));
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        message: 'Available tables fetched successfully.',
+        availableTables,
+      }),
+    };
+  } catch (error) {
+    console.error('Error fetching available tables:', error);
+
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: 'Failed to fetch available tables.', error: error.message }),
+    };
+  } finally {
+    if (connection) {
+      await connection.end();
+    }
+  }
+};
