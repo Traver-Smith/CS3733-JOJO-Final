@@ -66,7 +66,7 @@ export default function UserReservationLookup() {
 
     try {
       const response = await fetch(
-        "https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/cancelReservation",
+        "https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/CancelReservation",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -119,29 +119,29 @@ export default function UserReservationLookup() {
           <div style={{ marginTop: "20px" }}>
             <h2>Your Reservations</h2>
             <ul>
-              {reservations.map((res, index) => {
+            {reservations.map((res, index) => {
                 const formattedDate = new Date(res.reserveDate).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
                 });
 
                 return (
-                  <li key={index}>
+                    <li key={index}>
                     <p><strong>Reservation ID:</strong> {res.reservationID}</p>
                     <p><strong>Restaurant Address:</strong> {res.restaurantResID}</p>
                     <p><strong>Date:</strong> {formattedDate}</p>
                     <p><strong>Time:</strong> {res.reserveTime}</p>
                     <button
-                      className={styles.button}
-                      onClick={() => openCancelModal(res)}
+                        className={`${styles.redButton} ${styles.redButton}`}
+                        onClick={() => openCancelModal(res)}
                     >
-                      Cancel Reservation
+                        Cancel Reservation
                     </button>
                     <hr />
-                  </li>
+                    </li>
                 );
-              })}
+                })}
             </ul>
           </div>
         )}
@@ -162,14 +162,14 @@ export default function UserReservationLookup() {
         onChange={(e) => setConfirmationCode(e.target.value)}
         className={styles.input}
       />
-      <div style={{ marginTop: "20px" }}>
-        <button onClick={handleCancelReservation} className={styles.button}>
-          Confirm Cancellation
+        <div style={{ marginTop: "20px" }}>
+        <button onClick={handleCancelReservation} className={`${styles.redButton} ${styles.redButton}`}>
+            Confirm Cancellation
         </button>
         <button onClick={closeCancelModal} className={styles.button}>
-          Close
+            Close
         </button>
-      </div>
+        </div>
     </div>
   </div>
 )}
