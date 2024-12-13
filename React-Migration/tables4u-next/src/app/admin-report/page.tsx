@@ -3,22 +3,24 @@
 import React, { useEffect, useState } from "react";
 import styles from "./styles.module.css";
 
-interface TableAvailability {
-  hour: string;
-  hasReservation: boolean;
-}
-
 interface TableData {
   tableID: number;
   tableNum: number;
   numSeats: number;
-  availability: TableAvailability[];
+  hour: string;
+  hasReservation: boolean;
+}
+
+interface HourData {
+  hour: string;
+  restaurantUtilization: string;
+  tables: TableData[];
 }
 
 export default function AdminAvailabilityReport() {
   const [restaurantResID, setRestaurantResID] = useState("");
   const [reserveDate, setReserveDate] = useState("");
-  const [availabilityData, setAvailabilityData] = useState<TableData[] | null>(null);
+  const [availabilityData, setAvailabilityData] = useState<HourData[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -111,45 +113,38 @@ export default function AdminAvailabilityReport() {
         {error && <p className={styles.error}>Error: {error}</p>}
 
         {availabilityData && (
-  <div className={styles.results}>
-    <h2>Availability Report for {reserveDate}</h2>
-    {/* Extract all unique hours from the first table (assuming all have same slots) */}
-    {availabilityData.length > 0 && (
-      <table className={styles.tableAvailability}>
-        <thead>
-          <tr>
-            <th>Hour</th>
-            {availabilityData.map(table => (
-              <th key={table.tableID}>Table {table.tableNum} (Seats: {table.numSeats})</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {availabilityData[0].availability.map((slot, index) => {
-            const timeOnly = slot.hour.split("T")[1].slice(0, 5);
-            return (
-              <tr key={slot.hour}>
-                <td>{timeOnly}</td>
-                {availabilityData.map(table => {
-                  const tableSlot = table.availability[index];
-                  return (
-                    <td key={table.tableID}>
-                      {tableSlot.hasReservation ? (
-                        <span className={styles.reserved}>Booked</span>
-                      ) : (
-                        <span className={styles.available}>Available</span>
-                      )}
-                    </td>
-                  )
-                })}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    )}
-  </div>
-)}
+          <div className={styles.results}>
+            <h2>Availability Report for {reserveDate}</h2>
+            <table className={styles.tableAvailability}>
+              <thead>
+                <tr>
+                  <th>Hour</th>
+                  {availabilityData[0].tables.map((table) => (
+                    <th key={table.tableID}>Table {table.tableNum}</th>
+                  ))}
+                  <th>Utilization</th>
+                </tr>
+              </thead>
+              <tbody>
+                {availabilityData.map((hourData) => (
+                  <tr key={hourData.hour}>
+                    <td>{hourData.hour.split("T")[1].slice(0, 5)}</td>
+                    {hourData.tables.map((table) => (
+                      <td key={table.tableID}>
+                        {table.hasReservation ? (
+                          <span className={styles.reserved}>Booked</span>
+                        ) : (
+                          <span className={styles.available}>Available</span>
+                        )}
+                      </td>
+                    ))}
+                    <td>{hourData.restaurantUtilization}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );
