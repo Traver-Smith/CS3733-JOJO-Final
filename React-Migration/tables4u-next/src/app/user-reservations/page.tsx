@@ -5,41 +5,50 @@ import styles from "./styles.module.css";
 
 export default function UserReservationLookup() {
   const [error, setError] = useState<string>("");
+  const [reservations, setReservations] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  // Handle the form submit event for reservation lookup
   const handleLookup = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const email = (event.currentTarget.elements.namedItem("email") as HTMLInputElement).value;
-    const confirmationCode = (event.currentTarget.elements.namedItem("confirmationCode") as HTMLInputElement).value;
+    const emailInput = event.currentTarget.elements.namedItem("email") as HTMLInputElement;
+    const confirmationInput = event.currentTarget.elements.namedItem("confirmationCode") as HTMLInputElement;
 
-    setError(""); // Reset error state
+    const email = emailInput.value.trim();
+    const confirmationCode = confirmationInput.value.trim();
+
+    setError(""); 
+    setReservations([]);
+    setLoading(true);
 
     try {
-      // ------------------------------------------------------
-      // const response = await fetch("YOUR_RESERVATION_LOOKUP_API_ENDPOINT", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({ email, confirmationCode }),
-      // });
-      //
-      // const data = await response.json();
-      //
-      // if (response.ok) {
-      //   // Handle successful reservation lookup, e.g.:
-      //   // window.location.href = `/user-reservation-details?reservationId=${data.reservationId}`;
-      // } else {
-      //   setError(data.error || "Could not find reservation. Please try again.");
-      // }
-      //
-      // Since we have no actual endpoint at this moment, we'll just simulate:
-      setTimeout(() => {
-        alert(`This would display reservation details for ${email} with code: ${confirmationCode}`);
-      }, 500);
-      // ------------------------------------------------------
-    } catch (err) {
-      console.error(err);
+      // Call the provided Lambda endpoint
+      const response = await fetch(
+        "https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/findExistingReservation",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }), 
+          // NOTE: The current Lambda does not handle confirmationCode.
+          // Once the backend supports it, you can add it as well:
+          // body: JSON.stringify({ email, confirmationCode })
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Successfully retrieved reservations
+        setReservations(data.data || []);
+      } else {
+        // If there's an error
+        setError(data.error || "Could not find reservation. Please try again.");
+      }
+    } catch (err: any) {
+      console.error("Error fetching reservation:", err);
       setError("An unexpected error occurred. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -66,12 +75,33 @@ export default function UserReservationLookup() {
             id="confirmationCode"
             name="confirmationCode"
             placeholder="Enter your confirmation code or reservation ID"
-            required
             className={styles.input}
           />
 
-          <button type="submit" className={styles.button}>Lookup Reservation</button>
+          <button type="submit" className={styles.button} disabled={loading}>
+            {loading ? "Looking up..." : "Lookup Reservation"}
+          </button>
         </form>
+
+        {/* Display reservations if any */}
+        {reservations.length > 0 && (
+          <div style={{ marginTop: "20px" }}>
+            <h2>Your Reservations</h2>
+            <ul>
+              {reservations.map((res, index) => (
+                <li key={index}>
+                  {/* Display relevant reservation details here */}
+                  <p><strong>Reservation ID:</strong> {res.reservationID}</p>
+                  <p><strong>Restaurant ID:</strong> {res.restaurantID}</p>
+                  <p><strong>Date:</strong> {res.reservationDate}</p>
+                  <p><strong>Time:</strong> {res.reservationTime}</p>
+                  {/* Add more fields as needed based on your DB schema */}
+                  <hr />
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -10,6 +10,9 @@ import AdminLogin from './admin-login/page';
 import AdminReport from './admin-report/page';
 import styles from './layout.module.css';
 import { NavigationProvider, useNavigation } from './NavigationContext';
+import OwnerLogin from './owner-login/page';
+import CreateRestaurant from './create-rest/page';
+
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -56,6 +59,8 @@ function LayoutWithNavigation({ children }: { children: React.ReactNode }) {
           <Route path="/restaurantLogin" element={<RestaurantLogin />} />
           <Route path="/adminLogin" element={<AdminLogin />} />
           <Route path="/adminReport" element={<AdminReport />} />
+          <Route path="/ownerLogin" element={<OwnerLogin />} />
+          <Route path="/createRestaurant" element={<CreateRestaurant />} />
         </Routes>
         {children}
       </main>
