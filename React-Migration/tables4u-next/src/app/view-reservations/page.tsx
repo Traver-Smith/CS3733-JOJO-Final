@@ -19,7 +19,6 @@ type TimeMap = Record<string, { tableID: string; tableNum: string; numSeats: num
 
 
 export default function ViewReservations() {
-  //const [availabilityData, setAvailabilityData] = useState<TableData[]>([]);
   const [availabilityData, setAvailabilityData] = useState<TimeMap>({});
   const [selectedDate, setSelectedDate] = useState<string>(""); // YYYY-MM-DD
   const restaurantName = sessionStorage.getItem("restaurantUsername") || "";
@@ -116,13 +115,14 @@ export default function ViewReservations() {
 
       const responseData = await response.json();
       const parsedData = JSON.parse(responseData.body)
+      console.log(parsedData)
       if (responseData.statusCode === 201) {
         alert("Reservation successful!, Your confirmation code is: " + (parsedData.reservationID));
         if (selectedDate) {
           fetchAvailability(selectedDate); // Refresh availability
         }
       } else {
-        alert(responseData.error || "Failed to make reservation.");
+        alert(parsedData.error || "Failed to make reservation.");
       }
     } catch (error) {
       console.error("Error making reservation:", error);
