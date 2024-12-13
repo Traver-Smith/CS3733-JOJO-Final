@@ -11,31 +11,18 @@ export const handler = async (event) => {
   let connection;
 
   try {
-    const { address, restaurantPassword} = event;
+    const { address } = event;
 
-    if (!address|| !restaurantPassword) {
+    if (!address) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: 'address and restaurant password is required' }),
+        body: JSON.stringify({ error: 'address is required' }),
       };
     }
 
     // Connect to the database
     connection = await mysql.createConnection(dbConfig);
 
-    // Verify the owner's credentials
-    const [rows] = await connection.execute(
-      'SELECT * FROM Restaurant WHERE address = ? AND restaurantPassword = ?',
-      [address, restaurantPassword]
-    );
-
-    if (rows.length === 0) {
-      return {
-        statusCode: 403,
-        body: JSON.stringify({ error: 'Invalid credentials' }),
-      };
-    }
-    
     // Start a transaction
     await connection.beginTransaction();
 
