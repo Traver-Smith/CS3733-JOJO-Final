@@ -4,9 +4,15 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation"; // Use Next.js router for navigation
 import styles from "./styles.module.css";
 
+// Interface for the restaurant
 interface Restaurant {
   restaurantName: string;
   address: string;
+}
+
+// Interface for API response
+interface RestaurantApiResponse {
+  body: string; // JSON string containing restaurant data
 }
 
 export default function UserRestaurantList() {
@@ -28,13 +34,16 @@ export default function UserRestaurantList() {
     try {
       setLoading(true);
       const response = await fetch(apiEndpoint);
-      if (!response.ok) throw new Error(`Error: ${response.statusText}`);
-      const data = await response.json();
-      const restaurants = JSON.parse(data.body)?.data || [];
 
-      const normalizedRestaurants = restaurants.map((restaurant: any) => ({
+      if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+
+      const data: RestaurantApiResponse = await response.json();
+      const parsedData: Restaurant[] = JSON.parse(data.body)?.data || [];
+
+      // Normalize the restaurant data
+      const normalizedRestaurants: Restaurant[] = parsedData.map((restaurant) => ({
         restaurantName: restaurant.restaurantName,
-        address: restaurant.Address, // Normalize Address to address
+        address: restaurant.address,
       }));
 
       setRestaurants(normalizedRestaurants);
@@ -54,7 +63,7 @@ export default function UserRestaurantList() {
     }
 
     if (!selectedDate) {
-      const filteredBySearchTerm = allRestaurants.filter((restaurant: Restaurant) =>
+      const filteredBySearchTerm = allRestaurants.filter((restaurant) =>
         restaurant.restaurantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         restaurant.address.toLowerCase().includes(searchTerm.toLowerCase())
       );
@@ -78,11 +87,11 @@ export default function UserRestaurantList() {
 
       if (!response.ok) throw new Error(`Error: ${response.statusText}`);
 
-      const responseData = await response.json();
-      const filteredByDate =
+      const responseData: RestaurantApiResponse = await response.json();
+      const filteredByDate: Restaurant[] =
         JSON.parse(responseData.body)?.availableRestaurants || [];
 
-      const filtered = filteredByDate.filter((restaurant: Restaurant) => {
+      const filtered = filteredByDate.filter((restaurant) => {
         const lowerSearchTerm = searchTerm.toLowerCase();
         return (
           restaurant.restaurantName.toLowerCase().includes(lowerSearchTerm) ||
@@ -107,10 +116,12 @@ export default function UserRestaurantList() {
   };
 
   const doAll = (restaurantName: string, restaurantAddress: string) => {
-    if (typeof window !== "undefined") {
+    //if (typeof window !== "undefined") {
       sessionStorage.setItem("restaurantUsername", restaurantName);
       sessionStorage.setItem("restaurantAddress", restaurantAddress);
-    }
+      console.log(restaurantAddress);
+      console.log(restaurantName)
+    //}
     router.push("/view-reservations"); // Navigate using Next.js router
   };
 

@@ -1,4 +1,3 @@
-
 'use client';
 import React, { useEffect, useState } from "react";
 import styles from "./styles.module.css";
@@ -15,45 +14,55 @@ interface TableData {
   availability: AvailabilitySlot[];
 }
 
-interface ClosedDay {
-  closedDays: string;
-}
-
 type TimeMap = Record<string, { tableID: string; tableNum: string; numSeats: number }[]>;
-
 
 export default function ViewReservations() {
   const [availabilityData, setAvailabilityData] = useState<TimeMap>({});
   const [selectedDate, setSelectedDate] = useState<string>(""); // YYYY-MM-DD
-  const restaurantName = sessionStorage.getItem("restaurantUsername") || "";
-  const restaurantAddress = sessionStorage.getItem("restaurantAddress") || "";
+  const [restaurantName, setRestaurantName] = useState<string>("");
+  const [restaurantAddress, setRestaurantAddress] = useState<string>("");
+
+  useEffect(() => {
+    // Access sessionStorage only on the client side
+    //if (typeof window !== "undefined") {
+      const name = sessionStorage.getItem("restaurantUsername") || "";
+      const address = sessionStorage.getItem("restaurantAddress") || "";
+      setRestaurantName(name);
+      setRestaurantAddress(address);
+      console.log(name);
+      console.log(address);
+    //}
+  }, []);
 
   useEffect(() => {
     // Fetch availability whenever the selectedDate changes
     if (selectedDate) {
-      checkIfClosed()
+      checkIfClosed();
       fetchAvailability(selectedDate);
     }
   }, [selectedDate]);
 
   const checkIfClosed = async () => {
     try {
-      const response = await fetch("https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/getClosedDays", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ restaurantAddress: restaurantAddress }),
-      });
+      const response = await fetch(
+        "https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/getClosedDays",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ restaurantAddress }),
+        }
+      );
 
       if (!response.ok) throw new Error("Failed to fetch closed days");
 
       const data = await response.json();
-      const parsedData = JSON.parse(data.body)
+      const parsedData = JSON.parse(data.body);
       const targetDate = new Date(selectedDate).toISOString();
 
-      for (const closedDays of parsedData.closedDays.values("closedDays")) {
-        if (closedDays.closedDays.toString() === targetDate){
-          setSelectedDate("")
-          alert(restaurantName + " is closed on that day, please select another date.")
+      for (const closedDay of parsedData.closedDays) {
+        if (closedDay === targetDate) {
+          setSelectedDate("");
+          alert(`${restaurantName} is closed on that day, please select another date.`);
         }
       }
     } catch (error) {
@@ -61,29 +70,24 @@ export default function ViewReservations() {
     }
   };
 
-
-
-
-
   const fetchAvailability = async (date: string) => {
     try {
-      const response = await fetch("https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/viewAvailableTables", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ restaurantResID: restaurantAddress, reserveDate: date }),
-      });
+      const response = await fetch(
+        "https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/viewAvailableTables",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ restaurantResID: restaurantAddress, reserveDate: date }),
+        }
+      );
 
       if (!response.ok) throw new Error("Failed to fetch availability");
 
       const data = await response.json();
+      const parsedData = JSON.parse(data.body);
 
-      const parsedData = JSON.parse(data.body)
-     
-      
-      // data.data is the array of tables with their availability
       const tableData: TableData[] = parsedData.data;
-      
-      
+
       if (tableData.length > 0) {
         const timeMap: TimeMap = {};
 
@@ -93,8 +97,6 @@ export default function ViewReservations() {
               if (!timeMap[slot.hour]) {
                 timeMap[slot.hour] = [];
               }
-              // Add the table info without the availability array
-              // Add table info without the availability array
               timeMap[slot.hour].push({
                 tableID: table.tableID,
                 tableNum: table.tableNum,
@@ -111,12 +113,6 @@ export default function ViewReservations() {
   };
 
   const makeReservation = async (tableNum: string, tableID: string, time: string) => {
-    // time is currently "HH:MM". We need the full format for the reservation.
-    // The reservation endpoint likely needs the time in a known format.
-    // The selected date is known, so we can construct "YYYY-MM-DDTHH:MM".
-    const reserveTime = time; // For the makeReservation call, we might just send HH:MM if that's what the endpoint expects.
-                              // If it expects full datetime, use: `${selectedDate}T${time}:00`
-
     const emailInput = document.getElementById(`email_${tableID}_${time}`) as HTMLInputElement;
     const numPeopleInput = document.getElementById(`numPeople_${tableID}_${time}`) as HTMLInputElement;
 
@@ -140,18 +136,18 @@ export default function ViewReservations() {
             email: emailInput.value,
             restaurantAddress,
             tableNum,
-            reserveTime, // If necessary, adjust format to full datetime: `${selectedDate}T${time}:00`
+            reserveTime: time,
             reserveDate: selectedDate,
-            numPeople: parseInt(numPeopleInput.value)
+            numPeople: parseInt(numPeopleInput.value),
           }),
         }
       );
 
       const responseData = await response.json();
-      const parsedData = JSON.parse(responseData.body)
-      console.log(parsedData)
+      const parsedData = JSON.parse(responseData.body);
+
       if (responseData.statusCode === 201) {
-        alert("Reservation successful!, Your confirmation code is: " + (parsedData.reservationID));
+        alert(`Reservation successful! Your confirmation code is: ${parsedData.reservationID}`);
         if (selectedDate) {
           fetchAvailability(selectedDate); // Refresh availability
         }
@@ -168,7 +164,7 @@ export default function ViewReservations() {
     <div className={styles.pageContainer}>
       <header className={styles.header}>
         <div className={styles.headerTitle}>
-          <h1>Viewing availible bookings for {restaurantName}</h1>
+          <h1>Viewing available bookings for {restaurantName}</h1>
         </div>
       </header>
 

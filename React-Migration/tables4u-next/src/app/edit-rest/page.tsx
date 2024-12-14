@@ -357,13 +357,13 @@ const renderRestaurant = async () => {
   }
   };
 
-  const handleDayChange = (day: string) => {
+  /*const handleDayChange = (day: string) => {
     if (openDays.includes(day)) {
       setOpenDays(openDays.filter((d) => d !== day));
     } else {
       setOpenDays([...openDays, day]);
     }
-  };
+  };*/
 
   return (
     <div className={styles.container}>

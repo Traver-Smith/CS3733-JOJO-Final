@@ -3,13 +3,22 @@
 import React, { useState } from "react";
 import styles from "./styles.module.css";
 
+interface Reservation {
+  reservationID: string;
+  restaurantResID: string;
+  reserveDate: string; // Format: YYYY-MM-DD
+  reserveTime: string; // Format: HH:MM
+  userEmail: string;
+  numPeople: number;
+}
+
 export default function UserReservationLookup() {
   const [error, setError] = useState<string>("");
-  const [reservations, setReservations] = useState<any[]>([]);
+  const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState<boolean>(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState<boolean>(false);
-  const [selectedReservation, setSelectedReservation] = useState<any>(null);
+  const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
   const [confirmationCode, setConfirmationCode] = useState<string>("");
   const [successMessage, setSuccessMessage] = useState<string>("");
 
@@ -41,18 +50,19 @@ export default function UserReservationLookup() {
       } else {
         setError(result.error || "Could not find reservation. Please try again.");
       }
-    } catch (err: any) {
-      console.error("Error fetching reservation:", err);
-      setError("An unexpected error occurred. Please try again.");
-    } finally {
+    } catch (error) {
+      if (error instanceof Error) {
+          console.error("Error message:", error.message);
+      } 
+  }finally {
       setLoading(false);
     }
   };
 
-  const openCancelModal = (reservation: any) => {
+  const openCancelModal = (reservation: Reservation) => {
     setSelectedReservation(reservation);
     setIsCancelModalOpen(true);
-  };
+};
 
   const closeCancelModal = () => {
     setIsCancelModalOpen(false);
@@ -78,7 +88,7 @@ export default function UserReservationLookup() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            email: selectedReservation.userEmail,
+            email: selectedReservation?.userEmail,
             confirmationCode: parseInt(confirmationCode, 10),
           }),
         }
@@ -98,15 +108,20 @@ export default function UserReservationLookup() {
       // Success case
       const parsedBody = JSON.parse(result.body);
       setReservations((prev) =>
-        prev.filter((res) => res.reservationID !== selectedReservation.reservationID)
+        prev.filter((res) => res.reservationID !== selectedReservation?.reservationID)
       );
       setSuccessMessage(parsedBody.message);
       setIsSuccessModalOpen(true);
       closeCancelModal();
-    } catch (err: any) {
-      console.error("Error cancelling reservation:", err);
-      setError("An unexpected error occurred. Please try again.");
-    }
+    } catch (error) {
+      if (error instanceof Error) {
+          console.error("Error cancelling reservation:", error.message);
+          setError("An unexpected error occurred. Please try again.");
+      } else {
+          console.error("Unknown error:", error);
+          setError("An unknown error occurred.");
+      }
+  }
   };
 
 
@@ -171,7 +186,7 @@ export default function UserReservationLookup() {
             <h2>Cancel Reservation</h2>
             <p>
               Please enter the confirmation code to cancel the reservation at{" "}
-              <strong>{selectedReservation.restaurantResID}</strong>.
+              <strong>{selectedReservation?.restaurantResID}</strong>.
             </p>
             <input
               type="text"
