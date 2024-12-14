@@ -68,20 +68,10 @@ export default function UserRestaurantList() {
   
       let filteredRestaurants: Restaurant[] = allRestaurants;
   
-      // Filter by search term locally
-      if (searchTerm) {
-        const lowerSearchTerm = searchTerm.toLowerCase();
-        filteredRestaurants = filteredRestaurants.filter(
-          (restaurant) =>
-            restaurant.restaurantName.toLowerCase().includes(lowerSearchTerm) ||
-            restaurant.Address.toLowerCase().includes(lowerSearchTerm)
-        );
-      }
-  
-      // Fetch closed restaurants for the selected date
+      // Fetch restaurants open on the selected date via API
       if (selectedDate) {
         const apiEndpoint =
-          "https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/getClosedDays";
+          "https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/userSearchAvailableRestaurants";
   
         const response = await fetch(apiEndpoint, {
           method: "POST",
@@ -91,18 +81,21 @@ export default function UserRestaurantList() {
   
         if (!response.ok) throw new Error(`Error: ${response.statusText}`);
   
-        const responseData: { closedRestaurants: Restaurant[] } = await response.json();
-        const closedRestaurants: Restaurant[] =
-          responseData.closedRestaurants || [];
+        const responseData: RestaurantApiResponse = await response.json();
+        const availableRestaurants: Restaurant[] =
+          JSON.parse(responseData.body)?.availableRestaurants || [];
   
-        // Exclude closed restaurants from the filtered list
+        // Replace the filtered list with only the available restaurants
+        filteredRestaurants = availableRestaurants;
+      }
+  
+      // Filter by search term locally on the already filtered list
+      if (searchTerm) {
+        const lowerSearchTerm = searchTerm.toLowerCase();
         filteredRestaurants = filteredRestaurants.filter(
           (restaurant) =>
-            !closedRestaurants.some(
-              (closed) =>
-                closed.restaurantName === restaurant.restaurantName &&
-                closed.Address === restaurant.Address
-            )
+            restaurant.restaurantName.toLowerCase().includes(lowerSearchTerm) ||
+            restaurant.Address.toLowerCase().includes(lowerSearchTerm)
         );
       }
   
@@ -114,6 +107,7 @@ export default function UserRestaurantList() {
       setLoading(false);
     }
   };
+  
   
   
   
