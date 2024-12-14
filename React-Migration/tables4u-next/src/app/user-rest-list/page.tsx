@@ -7,7 +7,7 @@ import styles from "./styles.module.css";
 // Interface for the restaurant
 interface Restaurant {
   restaurantName: string;
-  address: string;
+  Address: string;
 }
 
 // Interface for API response
@@ -43,7 +43,7 @@ export default function UserRestaurantList() {
       // Normalize the restaurant data
       const normalizedRestaurants: Restaurant[] = parsedData.map((restaurant) => ({
         restaurantName: restaurant.restaurantName,
-        address: restaurant.address,
+        Address: restaurant.Address,
       }));
 
       setRestaurants(normalizedRestaurants);
@@ -65,7 +65,7 @@ export default function UserRestaurantList() {
     if (!selectedDate) {
       const filteredBySearchTerm = allRestaurants.filter((restaurant) =>
         restaurant.restaurantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        restaurant.address.toLowerCase().includes(searchTerm.toLowerCase())
+        restaurant.Address.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setRestaurants(filteredBySearchTerm);
       setError("");
@@ -95,7 +95,7 @@ export default function UserRestaurantList() {
         const lowerSearchTerm = searchTerm.toLowerCase();
         return (
           restaurant.restaurantName.toLowerCase().includes(lowerSearchTerm) ||
-          restaurant.address.toLowerCase().includes(lowerSearchTerm)
+          restaurant.Address.toLowerCase().includes(lowerSearchTerm)
         );
       });
 
@@ -185,10 +185,10 @@ export default function UserRestaurantList() {
                     className={styles.restaurantImage}
                   />
                   <h3>{restaurant.restaurantName}</h3>
-                  <p>{restaurant.address}</p>
+                  <p>{restaurant.Address}</p>
                 </div>
                 <button
-                  onClick={() => doAll(restaurant.restaurantName, restaurant.address)}
+                  onClick={() => doAll(restaurant.restaurantName, restaurant.Address)}
                   className={styles.button}
                 >
                   View Reservations

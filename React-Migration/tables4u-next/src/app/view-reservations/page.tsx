@@ -57,9 +57,11 @@ export default function ViewReservations() {
 
       const data = await response.json();
       const parsedData = JSON.parse(data.body);
-      const targetDate = new Date(selectedDate).toISOString();
+      const targetDate = new Date(selectedDate).toISOString().split('T')[0];
 
       for (const closedDay of parsedData.closedDays) {
+        console.log(closedDay);
+        console.log(targetDate);
         if (closedDay === targetDate) {
           setSelectedDate("");
           alert(`${restaurantName} is closed on that day, please select another date.`);
