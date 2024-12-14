@@ -184,7 +184,7 @@ export default function UserRestaurantList() {
                   onClick={() => doAll(restaurant.restaurantName, restaurant.address)}
                   className={styles.button}
                 >
-                  View Reservations
+                  Find a Reservation
                 </button>
               </div>
             ))

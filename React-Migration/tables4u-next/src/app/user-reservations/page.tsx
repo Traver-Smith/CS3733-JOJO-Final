@@ -86,7 +86,7 @@ export default function UserReservationLookup() {
   
       const result = await response.json(); // Call once and use below
   
-      if (!response.ok) {
+      if (result.statusCode!=200) {
         if (response.status === 404) {
           setError(result.error || "Reservation not found for the given email and confirmation code.");
           return;
@@ -137,11 +137,8 @@ export default function UserReservationLookup() {
             <h2>Your Reservations</h2>
             <ul>
               {reservations.map((res, index) => {
-                const formattedDate = new Date(res.reserveDate).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                });
+                const date = new Date(res.reserveDate);
+                const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()+1).padStart(2, '0')}`;
 
                 return (
                   <li key={index}>
