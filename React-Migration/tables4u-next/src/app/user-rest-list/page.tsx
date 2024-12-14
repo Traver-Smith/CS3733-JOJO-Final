@@ -1,7 +1,8 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import styles from './styles.module.css';
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation"; // Use Next.js router for navigation
+import styles from "./styles.module.css";
 
 interface Restaurant {
   restaurantName: string;
@@ -11,20 +12,19 @@ interface Restaurant {
 export default function UserRestaurantList() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [allRestaurants, setAllRestaurants] = useState<Restaurant[]>([]);
-  const [selectedDate, setSelectedDate] = useState('');
-  const [searchTerm, setSearchTerm] = useState(''); // Search term for filtering by name or address
+  const [selectedDate, setSelectedDate] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
+  const router = useRouter(); // Next.js navigation hook
 
-  // Fetch all restaurants on initial load
   useEffect(() => {
     fetchAllRestaurants();
   }, []);
 
-  // Fetch all restaurants from the consumerList endpoint
   const fetchAllRestaurants = async () => {
     const apiEndpoint =
-      'https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/consumerList';
+      "https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/consumerList";
     try {
       setLoading(true);
       const response = await fetch(apiEndpoint);
@@ -40,44 +40,39 @@ export default function UserRestaurantList() {
       setRestaurants(normalizedRestaurants);
       setAllRestaurants(normalizedRestaurants);
     } catch (error) {
-      console.error('Error fetching all restaurants:', error);
-      setError('Failed to load restaurants. Please try again.');
+      console.error("Error fetching all restaurants:", error);
+      setError("Failed to load restaurants. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Filter restaurants using either date, search term, or both
   const filterRestaurants = async () => {
     if (!selectedDate && !searchTerm) {
-      setError('Please select a date or enter a search term to filter.');
+      setError("Please select a date or enter a search term to filter.");
       return;
     }
 
     if (!selectedDate) {
-      // Filter only by search term if no date is selected
       const filteredBySearchTerm = allRestaurants.filter((restaurant: Restaurant) =>
         restaurant.restaurantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         restaurant.address.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setRestaurants(filteredBySearchTerm);
-      setError('');
+      setError("");
       return;
     }
 
     const apiEndpoint =
-      'https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/userSearchAvailableRestaurants';
+      "https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/userSearchAvailableRestaurants";
 
     try {
       setLoading(true);
-      setError('');
+      setError("");
 
-      // Fetch restaurants based on the selected date
       const response = await fetch(apiEndpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ searchDate: selectedDate }),
       });
 
@@ -87,7 +82,6 @@ export default function UserRestaurantList() {
       const filteredByDate =
         JSON.parse(responseData.body)?.availableRestaurants || [];
 
-      // Filter by name or address if the search term exists
       const filtered = filteredByDate.filter((restaurant: Restaurant) => {
         const lowerSearchTerm = searchTerm.toLowerCase();
         return (
@@ -98,24 +92,26 @@ export default function UserRestaurantList() {
 
       setRestaurants(filtered);
     } catch (error) {
-      console.error('Error filtering restaurants:', error);
-      setError('Failed to filter restaurants. Please try again.');
+      console.error("Error filtering restaurants:", error);
+      setError("Failed to filter restaurants. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   const resetFilters = () => {
-    setSelectedDate(''); // Clear date field
-    setSearchTerm(''); // Clear search term
-    setRestaurants(allRestaurants); // Reset to all restaurants
-    setError(''); // Clear error message
+    setSelectedDate("");
+    setSearchTerm("");
+    setRestaurants(allRestaurants);
+    setError("");
   };
 
   const doAll = (restaurantName: string, restaurantAddress: string) => {
-    sessionStorage.setItem('restaurantUsername', restaurantName);
-    sessionStorage.setItem('restaurantAddress', restaurantAddress);
-    window.location.href = '/view-reservations';
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("restaurantUsername", restaurantName);
+      sessionStorage.setItem("restaurantAddress", restaurantAddress);
+    }
+    router.push("/view-reservations"); // Navigate using Next.js router
   };
 
   if (loading) {

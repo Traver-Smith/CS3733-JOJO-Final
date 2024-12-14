@@ -1,6 +1,7 @@
 "use client";
-import { useNavigate } from "react-router-dom";
+
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation"; // Use Next.js' router for navigation
 import styles from "./styles.module.css";
 
 interface Restaurant {
@@ -11,7 +12,7 @@ interface Restaurant {
 
 export default function AdminRestaurantList() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
-  const navigate = useNavigate();
+  const router = useRouter(); // Use Next.js' router
   const apiEndpoint =
     "https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/adminList";
   const deleteApiEndpoint =
@@ -59,27 +60,20 @@ export default function AdminRestaurantList() {
 
   return (
     <div>
-      
-      
       <div className={styles.container}>
-      {/* Button Box */}
-      <div className={styles.restaurantList}>
-        <h1>Admin Restaurant List</h1>
-        {/* Render restaurant data here */}
-      </div>
-      <div className={styles.buttonBox}>
-      <button
-        className={styles.reportButton}
-        onClick={() => navigate("/adminReport")} // Use navigate
-      >
-        View Availability Reports
-      </button>
+        <div className={styles.restaurantList}>
+          <h1>Admin Restaurant List</h1>
+        </div>
+        <div className={styles.buttonBox}>
+          <button
+            className={styles.reportButton}
+            onClick={() => router.push("/admin-report")} // Use router.push
+          >
+            View Availability Reports
+          </button>
+        </div>
       </div>
 
-      {/* Restaurant List */}
-
-    </div>
-      
       <div className={styles.container}>
         {restaurants.map((restaurant, index) => (
           <div key={index} className={styles.restaurant}>
@@ -88,16 +82,21 @@ export default function AdminRestaurantList() {
             </div>
             <p className={styles.status}>
               Status:{" "}
-              <span className={restaurant.isActive === 1 ? styles.active : styles.inactive}>
+              <span
+                className={
+                  restaurant.isActive === 1 ? styles.active : styles.inactive
+                }
+              >
                 {restaurant.isActive === 1 ? "Active" : "Inactive"}
               </span>
             </p>
             <p className={styles.address}>Address: {restaurant.address}</p>
             <div className={styles.actions}>
-             
               <button
                 className={styles.deleteButton}
-                onClick={() => deleteRestaurant(restaurant.address, restaurant.restaurantName)}
+                onClick={() =>
+                  deleteRestaurant(restaurant.address, restaurant.restaurantName)
+                }
               >
                 Delete Restaurant
               </button>

@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, {  useState } from "react";
+ // Use Next.js router for navigation
 import styles from "./styles.module.css";
 
 interface TableData {
@@ -28,7 +28,7 @@ export default function AdminAvailabilityReport() {
   const [selectedReservation, setSelectedReservation] = useState<number | null>(null);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
 
-  const navigate = useNavigate(); // Add navigate hook
+  
 
   const apiEndpoint =
     "https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/generateAvailability";
@@ -60,10 +60,14 @@ export default function AdminAvailabilityReport() {
 
       const parsedData = JSON.parse(result.body).data;
       setAvailabilityData(parsedData);
-    } catch (error: any) {
-      console.error("Error fetching availability:", error);
-      setError(error.message || "An unexpected error occurred.");
-    } finally {
+    } catch (error) {
+      if (error instanceof Error) {
+          console.error("Error fetching availability:", error.message);
+          // Additional specific error handling logic can go here
+      } else {
+          console.error("An unexpected error occurred:", error);
+      }
+  } finally {
       setLoading(false);
     }
   };
@@ -73,16 +77,16 @@ export default function AdminAvailabilityReport() {
       alert("No reservation selected to cancel.");
       return;
     }
-  
+
     try {
       const response = await fetch(cancelReservationEndpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ reservationID: selectedReservation }),
       });
-  
+
       const result = await response.json();
-  
+
       if (response.ok) {
         alert(result.message || "Reservation cancelled successfully.");
         setIsCancelModalOpen(false);
@@ -91,15 +95,18 @@ export default function AdminAvailabilityReport() {
       } else {
         alert(result.message || "Failed to cancel the reservation.");
       }
-    } catch (error: any) {
-      console.error("Error cancelling reservation:", error);
-      alert("An unexpected error occurred while cancelling the reservation.");
-    }
+    } catch (error) {
+      if (error instanceof Error) {
+          console.error("Error fetching availability:", error.message);
+          // Additional specific error handling logic can go here
+      } else {
+          console.error("An unexpected error occurred:", error);
+      }
+  }
   };
 
   return (
     <div>
-      
       <div className={styles.container}>
         <form
           onSubmit={(e) => {
