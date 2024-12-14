@@ -9,7 +9,7 @@ export default function CreateRestaurant() {
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
 
-    const apiEndpoint = 'https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/CreateRestaurant';
+    const apiEndpoint = 'https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/createRestaurant';
 
     const createRestaurant = async () => {
         setErrorMessage('');

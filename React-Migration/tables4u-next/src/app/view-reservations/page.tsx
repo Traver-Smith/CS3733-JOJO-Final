@@ -38,7 +38,7 @@ export default function ViewReservations() {
 
   const checkIfClosed = async () => {
     try {
-      const response = await fetch("https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/getClosedDays", {
+      const response = await fetch("https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/getClosedDays", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ restaurantAddress: restaurantAddress }),
@@ -67,7 +67,7 @@ export default function ViewReservations() {
 
   const fetchAvailability = async (date: string) => {
     try {
-      const response = await fetch("https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/ViewAvailableTables", {
+      const response = await fetch("https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/viewAvailableTables", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ restaurantResID: restaurantAddress, reserveDate: date }),

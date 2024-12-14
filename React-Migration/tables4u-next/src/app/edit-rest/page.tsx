@@ -63,7 +63,7 @@ export default function EditRestaurant() {
   
     try {
       const response = await fetch(
-        "https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage1/addClosedDay",
+        "https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/addCloseDay",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -100,7 +100,7 @@ const renderRestaurant = async () => {
 
   try {
     const response = await fetch(
-      "https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/getRestaurant",
+      "https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/getRestaurant",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -145,7 +145,7 @@ const renderRestaurant = async () => {
   const fetchExistingTables = async () => {
     setError('');
     try {
-      const response = await fetch('https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/listTables', {
+      const response = await fetch('https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/showTables', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ address: restaurantAddress }),
@@ -185,7 +185,7 @@ const renderRestaurant = async () => {
     }
 
     try {
-      const response = await fetch('https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/addTable', {
+      const response = await fetch('https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/addTable', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -222,7 +222,7 @@ const renderRestaurant = async () => {
     if (!confirmDelete) return;
 
     try {
-      const response = await fetch('https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/removeTable', {
+      const response = await fetch('https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/removeTable', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -262,7 +262,7 @@ const renderRestaurant = async () => {
     const storedRestaurantName = typeof window !== 'undefined' ? sessionStorage.getItem('restaurantName') : '';
 
     try {
-      const response = await fetch('https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/editRestaurant', {
+      const response = await fetch('https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/editRestaurant', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -299,7 +299,7 @@ const renderRestaurant = async () => {
     if (!confirmActivate) return;
 
     try {
-      const response = await fetch('https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/ActivateRestaurant', {
+      const response = await fetch('https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/ActivateRestaurant', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ address: restaurantAddress }),

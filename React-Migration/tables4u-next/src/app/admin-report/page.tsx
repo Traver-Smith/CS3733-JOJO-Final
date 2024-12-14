@@ -28,9 +28,9 @@ export default function AdminAvailabilityReport() {
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
 
   const apiEndpoint =
-    "https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/adminReport";
+    "https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/generateAvailability";
   const cancelReservationEndpoint =
-    "https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage1/adminDeleteReservation";
+    "https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/adminDeleteReservation";
 
   const fetchAvailability = async () => {
     if (!restaurantResID || !reserveDate) {
