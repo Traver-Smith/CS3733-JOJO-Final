@@ -101,7 +101,7 @@ function Header() {
           Admin Login
         </button>
         <button className={styles.button} onClick={() => navigateTo('restaurantLogin')}>
-          Restaurant Login
+          Restaurant Login/Create
         </button>
       </div>
     </header>

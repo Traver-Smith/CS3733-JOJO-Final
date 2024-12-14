@@ -27,7 +27,7 @@ export default function RestaurantLogin() {
 
       const data = await response.json();
 
-      if (response.status === 200) {
+      if (data.statusCode === 200) {
         // Save username in session storage
         sessionStorage.setItem('restaurantUsername', address);
 
@@ -74,7 +74,7 @@ export default function RestaurantLogin() {
                     <button
                         type="button"
                         className={styles.secondaryButton}
-                        onClick={() => window.location.href = "/create-rest"}
+                        onClick={() => navigate("/createRestaurant")}
                     >
                         Create Restaurant
                     </button>

@@ -46,7 +46,7 @@ export default function AdminLogin() {
         <h1 className={styles.formTitle}>Admin Login</h1>
         <form className={styles.form} onSubmit={handleLogin}>
           {error && <div className={styles.error}>{error}</div>}
-          <label htmlFor="email">Email</label>
+          <label htmlFor="email">Username</label>
           <input type="text" id="email" name="email" placeholder="Enter your email" required />
           <label htmlFor="password">Password</label>
           <input type="password" id="password" name="password" placeholder="Enter your password" required />

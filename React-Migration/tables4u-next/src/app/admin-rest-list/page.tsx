@@ -72,7 +72,7 @@ export default function AdminRestaurantList() {
         className={styles.reportButton}
         onClick={() => navigate("/adminReport")} // Use navigate
       >
-        Availability Reports
+        View Availability Reports
       </button>
       </div>
 
@@ -94,7 +94,7 @@ export default function AdminRestaurantList() {
             </p>
             <p className={styles.address}>Address: {restaurant.address}</p>
             <div className={styles.actions}>
-              <button className={styles.viewButton}>View Restaurant</button>
+             
               <button
                 className={styles.deleteButton}
                 onClick={() => deleteRestaurant(restaurant.address, restaurant.restaurantName)}
