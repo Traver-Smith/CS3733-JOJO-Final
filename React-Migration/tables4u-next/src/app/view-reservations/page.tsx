@@ -15,6 +15,10 @@ interface TableData {
   availability: AvailabilitySlot[];
 }
 
+interface ClosedDay {
+  closedDays: string;
+}
+
 type TimeMap = Record<string, { tableID: string; tableNum: string; numSeats: number }[]>;
 
 
@@ -27,9 +31,39 @@ export default function ViewReservations() {
   useEffect(() => {
     // Fetch availability whenever the selectedDate changes
     if (selectedDate) {
+      checkIfClosed()
       fetchAvailability(selectedDate);
     }
   }, [selectedDate]);
+
+  const checkIfClosed = async () => {
+    try {
+      const response = await fetch("https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/getClosedDays", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ restaurantAddress: restaurantAddress }),
+      });
+
+      if (!response.ok) throw new Error("Failed to fetch closed days");
+
+      const data = await response.json();
+      const parsedData = JSON.parse(data.body)
+      const targetDate = new Date(selectedDate).toISOString();
+
+      for (const closedDays of parsedData.closedDays.values("closedDays")) {
+        if (closedDays.closedDays.toString() === targetDate){
+          setSelectedDate("")
+          alert(restaurantName + " is closed on that day, please select another date.")
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching closed days:", error);
+    }
+  };
+
+
+
+
 
   const fetchAvailability = async (date: string) => {
     try {
@@ -44,7 +78,7 @@ export default function ViewReservations() {
       const data = await response.json();
 
       const parsedData = JSON.parse(data.body)
-      console.log(parsedData)
+     
       
       // data.data is the array of tables with their availability
       const tableData: TableData[] = parsedData.data;
