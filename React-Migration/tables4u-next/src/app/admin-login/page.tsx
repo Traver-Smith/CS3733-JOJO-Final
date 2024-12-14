@@ -1,10 +1,12 @@
 "use client";
 
+import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import styles from "./styles.module.css";
 
 export default function AdminLogin() {
   const [error, setError] = useState<string>("");
+  const navigate = useNavigate(); // Add navigate hook
 
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -28,7 +30,7 @@ export default function AdminLogin() {
 
       if (data.statusCode == 200) {
         alert("Login successful!");
-        window.location.href = "/admin-rest-list";
+        navigate("/adminRestaurantList")
       } else {
         setError(data.error || "Invalid credentials.");
       }

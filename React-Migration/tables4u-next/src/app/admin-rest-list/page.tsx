@@ -1,5 +1,5 @@
 "use client";
-
+import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import styles from "./styles.module.css";
 
@@ -11,9 +11,9 @@ interface Restaurant {
 
 export default function AdminRestaurantList() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
-
+  const navigate = useNavigate();
   const apiEndpoint =
-    "https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/AdministratorList";
+    "https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/adminList";
   const deleteApiEndpoint =
     "https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/adminDeleteRestaurant";
 
@@ -59,21 +59,7 @@ export default function AdminRestaurantList() {
 
   return (
     <div>
-      <header className={styles.header}>
-        <div className={styles.headerLeft}>
-          <button onClick={() => alert("Redirecting to Make a Reservation page...")}>
-            Make a Reservation
-          </button>
-        </div>
-        <div className={styles.headerTitle}>
-          <h1>Tables4u</h1>
-          <h2>Admin List of Restaurants</h2>
-        </div>
-        <div className={styles.headerRight}>
-          <button onClick={() => (window.location.href = "/adminLogin")}>Admin Login</button>
-          <button onClick={() => (window.location.href = "/ownerLogin")}>Restaurant Login</button>
-        </div>
-      </header>
+      
       
       <div className={styles.container}>
       {/* Button Box */}
@@ -82,12 +68,12 @@ export default function AdminRestaurantList() {
         {/* Render restaurant data here */}
       </div>
       <div className={styles.buttonBox}>
-        <button
-          className={styles.reportButton}
-          onClick={() => window.location.href = '/admin-report'}
-        >
-          Availability Report
-        </button>
+      <button
+        className={styles.reportButton}
+        onClick={() => navigate("/adminReport")} // Use navigate
+      >
+        Availability Reports
+      </button>
       </div>
 
       {/* Restaurant List */}

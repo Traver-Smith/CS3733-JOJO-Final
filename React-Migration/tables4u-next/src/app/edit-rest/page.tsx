@@ -299,7 +299,7 @@ const renderRestaurant = async () => {
     if (!confirmActivate) return;
 
     try {
-      const response = await fetch('https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/ActivateRestaurant', {
+      const response = await fetch('https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/activateRestaurant', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ address: restaurantAddress }),

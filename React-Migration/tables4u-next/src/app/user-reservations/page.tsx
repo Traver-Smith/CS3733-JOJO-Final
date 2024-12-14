@@ -73,7 +73,7 @@ export default function UserReservationLookup() {
   
     try {
       const response = await fetch(
-        "https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/CancelReservation",
+        "https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/cancelReservation",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

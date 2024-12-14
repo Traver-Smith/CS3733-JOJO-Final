@@ -56,6 +56,16 @@
   .accordionHeader:hover {
     background-color: #0056b3;
   }
+
+  .filterContainer {
+    display: flex; /* Use flexbox layout */
+    justify-content: center; /* Horizontally center the contents */
+    align-items: center; /* Vertically center the contents, if needed */
+    flex-direction: column; /* Stack items vertically (optional, if you want them stacked) */
+    text-align: center; /* Ensure text inside is centered */
+    margin: 20px auto; /* Add auto margins to center the container itself */
+    font-weight: 500;
+  }
   
   .accordionContent {
     display: none;

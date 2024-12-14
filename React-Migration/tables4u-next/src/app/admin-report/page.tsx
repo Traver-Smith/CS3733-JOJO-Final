@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./styles.module.css";
 
 interface TableData {
@@ -26,6 +27,8 @@ export default function AdminAvailabilityReport() {
   const [error, setError] = useState("");
   const [selectedReservation, setSelectedReservation] = useState<number | null>(null);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+
+  const navigate = useNavigate(); // Add navigate hook
 
   const apiEndpoint =
     "https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/generateAvailability";
@@ -71,8 +74,6 @@ export default function AdminAvailabilityReport() {
       return;
     }
   
-    console.log("Attempting to cancel reservation ID:", selectedReservation);
-  
     try {
       const response = await fetch(cancelReservationEndpoint, {
         method: "POST",
@@ -80,9 +81,7 @@ export default function AdminAvailabilityReport() {
         body: JSON.stringify({ reservationID: selectedReservation }),
       });
   
-      console.log("Response status:", response.status); // Debugging
       const result = await response.json();
-      console.log("Response body:", result); // Debugging
   
       if (response.ok) {
         alert(result.message || "Reservation cancelled successfully.");
@@ -100,21 +99,7 @@ export default function AdminAvailabilityReport() {
 
   return (
     <div>
-      <header className={styles.header}>
-        <div className={styles.headerLeft}>
-          <button onClick={() => alert("Redirecting to Admin Home...")}>
-            Admin Home
-          </button>
-        </div>
-        <div className={styles.headerTitle}>
-          <h1>Tables4u</h1>
-          <h2>Admin Availability Report</h2>
-        </div>
-        <div className={styles.headerRight}>
-          <button onClick={() => (window.location.href = "/adminLogin")}>Admin Login</button>
-          <button onClick={() => (window.location.href = "/ownerLogin")}>Restaurant Login</button>
-        </div>
-      </header>
+      
       <div className={styles.container}>
         <form
           onSubmit={(e) => {
@@ -124,7 +109,7 @@ export default function AdminAvailabilityReport() {
           className={styles.form}
         >
           <div className={styles.formGroup}>
-            <label htmlFor="restaurantResID">Restaurant ID:</label>
+            <label htmlFor="restaurantResID">Restaurant Address:</label>
             <input
               type="text"
               id="restaurantResID"
@@ -153,6 +138,7 @@ export default function AdminAvailabilityReport() {
         {availabilityData && availabilityData.length > 0 && (
           <div className={styles.results}>
             <h2>Availability Report for {reserveDate}</h2>
+            <div>Click on a booked timeslot to delete a reservation</div>
             <table className={styles.tableAvailability}>
               <thead>
                 <tr>
@@ -169,20 +155,19 @@ export default function AdminAvailabilityReport() {
                     <td>{hourData.hour.split("T")[1].slice(0, 5)}</td>
                     {hourData.tables.map((table) => (
                       <td key={table.tableID}>
-                      {table.hasReservation ? (
-                        <button
-                          className={styles.reservedButton}
-                          onClick={() => {
-                            console.log("Selected reservation ID:", table.reservationID); // Debugging log
-                            setSelectedReservation(table.reservationID || null);
-                            setIsCancelModalOpen(true);
-                          }}
-                        >
-                          Booked
-                        </button>
-                      ) : (
-                        <span className={styles.available}>Available</span>
-                      )}
+                        {table.hasReservation ? (
+                          <button
+                            className={styles.reservedButton}
+                            onClick={() => {
+                              setSelectedReservation(table.reservationID || null);
+                              setIsCancelModalOpen(true);
+                            }}
+                          >
+                            Booked
+                          </button>
+                        ) : (
+                          <span className={styles.available}>Available</span>
+                        )}
                       </td>
                     ))}
                     <td>{hourData.restaurantUtilization}</td>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './styles.module.css';
 
 interface Restaurant {
@@ -12,7 +12,7 @@ export default function UserRestaurantList() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [allRestaurants, setAllRestaurants] = useState<Restaurant[]>([]);
   const [selectedDate, setSelectedDate] = useState('');
-  const [selectedTime, setSelectedTime] = useState('');
+  const [searchTerm, setSearchTerm] = useState(''); // Search term for filtering by name or address
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -31,15 +31,14 @@ export default function UserRestaurantList() {
       if (!response.ok) throw new Error(`Error: ${response.statusText}`);
       const data = await response.json();
       const restaurants = JSON.parse(data.body)?.data || [];
-  
-      // Normalize property names to match the format of `userSearchAvailableRestaurants`
+
       const normalizedRestaurants = restaurants.map((restaurant: any) => ({
         restaurantName: restaurant.restaurantName,
         address: restaurant.Address, // Normalize Address to address
       }));
-  
+
       setRestaurants(normalizedRestaurants);
-      setAllRestaurants(normalizedRestaurants); // Store for resetting filters
+      setAllRestaurants(normalizedRestaurants);
     } catch (error) {
       console.error('Error fetching all restaurants:', error);
       setError('Failed to load restaurants. Please try again.');
@@ -48,19 +47,32 @@ export default function UserRestaurantList() {
     }
   };
 
-  // Filter restaurants using the userSearchAvailableRestaurants endpoint
+  // Filter restaurants using either date, search term, or both
   const filterRestaurants = async () => {
-    const apiEndpoint =
-      'https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/userSearchAvailableRestaurants';
-
-    if (!selectedDate) {
-      setError('Please select a date to filter.');
+    if (!selectedDate && !searchTerm) {
+      setError('Please select a date or enter a search term to filter.');
       return;
     }
+
+    if (!selectedDate) {
+      // Filter only by search term if no date is selected
+      const filteredBySearchTerm = allRestaurants.filter((restaurant: Restaurant) =>
+        restaurant.restaurantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        restaurant.address.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setRestaurants(filteredBySearchTerm);
+      setError('');
+      return;
+    }
+
+    const apiEndpoint =
+      'https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/userSearchAvailableRestaurants';
 
     try {
       setLoading(true);
       setError('');
+
+      // Fetch restaurants based on the selected date
       const response = await fetch(apiEndpoint, {
         method: 'POST',
         headers: {
@@ -72,8 +84,19 @@ export default function UserRestaurantList() {
       if (!response.ok) throw new Error(`Error: ${response.statusText}`);
 
       const responseData = await response.json();
-      const filteredRestaurants = JSON.parse(responseData.body)?.availableRestaurants || [];
-      setRestaurants(filteredRestaurants);
+      const filteredByDate =
+        JSON.parse(responseData.body)?.availableRestaurants || [];
+
+      // Filter by name or address if the search term exists
+      const filtered = filteredByDate.filter((restaurant: Restaurant) => {
+        const lowerSearchTerm = searchTerm.toLowerCase();
+        return (
+          restaurant.restaurantName.toLowerCase().includes(lowerSearchTerm) ||
+          restaurant.address.toLowerCase().includes(lowerSearchTerm)
+        );
+      });
+
+      setRestaurants(filtered);
     } catch (error) {
       console.error('Error filtering restaurants:', error);
       setError('Failed to filter restaurants. Please try again.');
@@ -82,21 +105,12 @@ export default function UserRestaurantList() {
     }
   };
 
-  const timeOptions = useMemo(() => {
-    const intervals = 48;
-    const times = [];
-    let time = new Date();
-    time.setHours(0, 0, 0, 0);
-    for (let i = 0; i < intervals; i++) {
-      times.push(
-        `${time.getHours().toString().padStart(2, '0')}:${time.getMinutes()
-          .toString()
-          .padStart(2, '0')}`
-      );
-      time.setMinutes(time.getMinutes() + 30);
-    }
-    return times;
-  }, []);
+  const resetFilters = () => {
+    setSelectedDate(''); // Clear date field
+    setSearchTerm(''); // Clear search term
+    setRestaurants(allRestaurants); // Reset to all restaurants
+    setError(''); // Clear error message
+  };
 
   const doAll = (restaurantName: string, restaurantAddress: string) => {
     sessionStorage.setItem('restaurantUsername', restaurantName);
@@ -111,10 +125,25 @@ export default function UserRestaurantList() {
   return (
     <div className={styles.pageContainer}>
       <div className={styles.container}>
+        {/* Search Section */}
+        <div className={styles.filter}>
+          <label htmlFor="search" className={styles.label}>
+            Filter by Restaurant Name:
+          </label>
+          <input
+            type="text"
+            id="search"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className={styles.input}
+            placeholder="Enter restaurant name or address"
+          />
+        </div>
+
         {/* Filter Section */}
         <div className={styles.filter}>
           <label htmlFor="filter-date" className={styles.label}>
-            Select Date:
+            Filter by Date:
           </label>
           <input
             type="date"
@@ -123,29 +152,11 @@ export default function UserRestaurantList() {
             onChange={(e) => setSelectedDate(e.target.value)}
             className={styles.input}
           />
-          <label htmlFor="filter-time" className={styles.label}>
-            Select Time:
-          </label>
-          <select
-            id="filter-time"
-            value={selectedTime}
-            onChange={(e) => setSelectedTime(e.target.value)}
-            className={styles.input}
-          >
-            <option value="">Select Time</option>
-            {timeOptions.map((time, index) => (
-              <option key={index} value={time}>
-                {time}
-              </option>
-            ))}
-          </select>
+
           <button onClick={filterRestaurants} className={styles.button}>
             Filter
           </button>
-          <button
-            onClick={() => setRestaurants(allRestaurants)} // Reset to all restaurants
-            className={styles.button}
-          >
+          <button onClick={resetFilters} className={styles.button}>
             Reset
           </button>
         </div>

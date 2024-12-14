@@ -168,7 +168,7 @@ export default function ViewReservations() {
     <div className={styles.pageContainer}>
       <header className={styles.header}>
         <div className={styles.headerTitle}>
-          <h1>Viewing Reservations for {restaurantName}</h1>
+          <h1>Viewing availible bookings for {restaurantName}</h1>
         </div>
       </header>
 

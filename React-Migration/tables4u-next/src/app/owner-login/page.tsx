@@ -1,5 +1,5 @@
 'use client';
-
+import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import styles from './styles.module.css';
 import { useNavigation } from '../NavigationContext'; // Adjust the import path as needed
@@ -9,41 +9,38 @@ export default function RestaurantLogin() {
     const [error, setError] = useState('');
     const { setCurrentPage } = useNavigation();
 
-    const navigateTo = (page: string) => {
-        setCurrentPage(page);
-    };
+    const navigate = useNavigate(); // For navigation
 
-    const handleLogin = async (event: React.FormEvent) => {
-        event.preventDefault();
+  const handleLogin = async (event: React.FormEvent) => {
+    event.preventDefault();
 
-        try {
-            setError(''); // Clear any previous error messages
-            const response = await fetch(
-                'https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/loginRestaurant',
-                {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ address, restaurantPassword: password }),
-                }
-            );
-
-            const data = await response.json();
-
-            if (response.status === 200) {
-                // Save username and password in session storage
-                sessionStorage.setItem('restaurantUsername', address);
-                sessionStorage.setItem('restaurantPassword', password);
-
-                // Redirect to the edit restaurant page (adjust this key as needed)
-                navigateTo('edit-restaurant');
-            } else {
-                setError(data.error || 'Invalid address or password.');
-            }
-        } catch (err) {
-            setError('An error occurred. Please try again later.');
-            console.error('Error during login:', err);
+    try {
+      setError(''); // Clear any previous error messages
+      const response = await fetch(
+        'https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/loginRestaurant',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ address, restaurantPassword: password }),
         }
-    };
+      );
+
+      const data = await response.json();
+
+      if (response.status === 200) {
+        // Save username in session storage
+        sessionStorage.setItem('restaurantUsername', address);
+
+        // Redirect to the edit restaurant page
+        navigate('/editRestaurant');
+      } else {
+        setError(data.error || 'Invalid address or password.');
+      }
+    } catch (err) {
+      setError('An error occurred. Please try again later.');
+      console.error('Error during login:', err);
+    }
+  };
 
     
     return (
