@@ -98,7 +98,7 @@ export default function ViewReservations() {
 
     try {
       const response = await fetch(
-        "https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/makeReservation",
+        "https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/makeReservation",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

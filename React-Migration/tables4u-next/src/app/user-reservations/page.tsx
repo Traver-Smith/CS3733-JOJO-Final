@@ -25,7 +25,7 @@ export default function UserReservationLookup() {
 
     try {
       const response = await fetch(
-        "https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/findExistingReservation",
+        "https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/findExistingReservation",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -73,7 +73,7 @@ export default function UserReservationLookup() {
   
     try {
       const response = await fetch(
-        "https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/CancelReservation",
+        "https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/CancelReservation",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

@@ -16,7 +16,7 @@ export default function AdminLogin() {
 
     try {
       const response = await fetch(
-        "https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/loginAdministrator",
+        "https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/loginAdministrator",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

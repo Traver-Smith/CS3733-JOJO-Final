@@ -13,9 +13,9 @@ export default function AdminRestaurantList() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
 
   const apiEndpoint =
-    "https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/AdministratorList";
+    "https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/AdministratorList";
   const deleteApiEndpoint =
-    "https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/adminDeleteRestaurant";
+    "https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/adminDeleteRestaurant";
 
   useEffect(() => {
     fetchRestaurants();

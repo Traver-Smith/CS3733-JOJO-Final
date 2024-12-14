@@ -19,7 +19,7 @@ export default function RestaurantLogin() {
         try {
             setError(''); // Clear any previous error messages
             const response = await fetch(
-                'https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/loginRestaurant',
+                'https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/loginRestaurant',
                 {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -35,7 +35,7 @@ export default function RestaurantLogin() {
                 sessionStorage.setItem('restaurantPassword', password);
 
                 // Redirect to the edit restaurant page (adjust this key as needed)
-                navigateTo('editRestaurant');
+                navigateTo('edit-restaurant');
             } else {
                 setError(data.error || 'Invalid address or password.');
             }

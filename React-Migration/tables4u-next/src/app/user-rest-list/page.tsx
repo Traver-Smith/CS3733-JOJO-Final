@@ -25,7 +25,7 @@ export default function UserRestaurantList() {
   
 
   const fetchRestaurants = async () => {
-    const apiEndpoint = 'https://jx7q3te4na.execute-api.us-east-2.amazonaws.com/Stage2/ConsumerList';
+    const apiEndpoint = 'https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/consumerList';
     try {
       setLoading(true);
       const response = await fetch(apiEndpoint);
