@@ -61,45 +61,52 @@ export default function UserRestaurantList() {
       setError("Please select a date or enter a search term to filter.");
       return;
     }
-
-    if (!selectedDate) {
-      const filteredBySearchTerm = allRestaurants.filter((restaurant) =>
-        restaurant.restaurantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        restaurant.Address.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setRestaurants(filteredBySearchTerm);
-      setError("");
-      return;
-    }
-
-    const apiEndpoint =
-      "https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/userSearchAvailableRestaurants";
-
+  
     try {
       setLoading(true);
       setError("");
-
-      const response = await fetch(apiEndpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ searchDate: selectedDate }),
-      });
-
-      if (!response.ok) throw new Error(`Error: ${response.statusText}`);
-
-      const responseData: RestaurantApiResponse = await response.json();
-      const filteredByDate: Restaurant[] =
-        JSON.parse(responseData.body)?.availableRestaurants || [];
-
-      const filtered = filteredByDate.filter((restaurant) => {
+  
+      let filteredRestaurants: Restaurant[] = allRestaurants;
+  
+      // Filter by search term locally
+      if (searchTerm) {
         const lowerSearchTerm = searchTerm.toLowerCase();
-        return (
-          restaurant.restaurantName.toLowerCase().includes(lowerSearchTerm) ||
-          restaurant.Address.toLowerCase().includes(lowerSearchTerm)
+        filteredRestaurants = filteredRestaurants.filter(
+          (restaurant) =>
+            restaurant.restaurantName.toLowerCase().includes(lowerSearchTerm) ||
+            restaurant.Address.toLowerCase().includes(lowerSearchTerm)
         );
-      });
-
-      setRestaurants(filtered);
+      }
+  
+      // Fetch closed restaurants for the selected date
+      if (selectedDate) {
+        const apiEndpoint =
+          "https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/getClosedDays";
+  
+        const response = await fetch(apiEndpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ searchDate: selectedDate }),
+        });
+  
+        if (!response.ok) throw new Error(`Error: ${response.statusText}`);
+  
+        const responseData: { closedRestaurants: Restaurant[] } = await response.json();
+        const closedRestaurants: Restaurant[] =
+          responseData.closedRestaurants || [];
+  
+        // Exclude closed restaurants from the filtered list
+        filteredRestaurants = filteredRestaurants.filter(
+          (restaurant) =>
+            !closedRestaurants.some(
+              (closed) =>
+                closed.restaurantName === restaurant.restaurantName &&
+                closed.Address === restaurant.Address
+            )
+        );
+      }
+  
+      setRestaurants(filteredRestaurants);
     } catch (error) {
       console.error("Error filtering restaurants:", error);
       setError("Failed to filter restaurants. Please try again.");
@@ -107,7 +114,9 @@ export default function UserRestaurantList() {
       setLoading(false);
     }
   };
-
+  
+  
+  
   const resetFilters = () => {
     setSelectedDate("");
     setSearchTerm("");
