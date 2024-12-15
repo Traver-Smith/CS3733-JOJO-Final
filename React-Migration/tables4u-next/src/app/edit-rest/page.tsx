@@ -28,107 +28,30 @@ export default function EditRestaurant() {
     fetchExistingTables();
   }, []);
 
+  const renderRestaurant = async () => {
+    setError('');
+    if (!restaurantAddress) {
+      setError('Restaurant address is missing. Please log in again.');
+      return;
+    }
 
-  const removeClosedDay = async () => {
-    setIsLoading(true);
-    setError("");
-  
     try {
       const response = await fetch(
-        "https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/removeClosedDay",
+        'https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/getRestaurant',
         {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            restaurantClosedID: restaurantAddress,
-            closedDate: selectedDate,
-          }),
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ address: restaurantAddress }),
         }
       );
-  
-      const result = await response.json();
-  
-      if (response.ok) {
-        setClosedDays((prev) => prev.filter((day) => day !== selectedDate));
-        alert(result.message || "Day successfully opened.");
-        setSelectedDate(""); // Reset date picker
-      } else {
-        setError(result.message || "Failed to open the day.");
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-          console.error("Error fetching availability:", error.message);
-          // Additional specific error handling logic can go here
-      } else {
-          console.error("An unexpected error occurred:", error);
-      }
-  } finally {
-      setIsLoading(false);
-    }
-  };
 
-  const addClosedDay = async () => {
-    setIsLoading(true);
-    setError("");
-  
-    try {
-      const response = await fetch(
-        "https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/addCloseDay",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            restaurantClosedID: restaurantAddress,
-            closedDays: selectedDate,
-          }),
+      const data = await response.json();
+      if (response.status === 200) {
+        const restaurantData = JSON.parse(data.body)?.restaurant;
+        if (!restaurantData) {
+          setError('Error: No restaurant data returned from the API.');
+          return;
         }
-      );
-  
-      const result = await response.json();
-  
-      if (response.ok) {
-        setClosedDays((prev) => [...prev, selectedDate]);
-        alert(result.message || "Day successfully closed.");
-        setSelectedDate(""); // Reset date picker
-      } else {
-        setError(result.message || "Failed to close the day.");
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-          console.error("Error fetching availability:", error.message);
-          // Additional specific error handling logic can go here
-      } else {
-          console.error("An unexpected error occurred:", error);
-      }
-  } finally {
-      setIsLoading(false);
-    }
-  };
-
-const renderRestaurant = async () => {
-  setError("");
-  if (!restaurantAddress) {
-    setError("Restaurant address is missing. Please log in again.");
-    return;
-  }
-
-  try {
-    const response = await fetch(
-      "https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/getRestaurant",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ address: restaurantAddress }),
-      }
-    );
-
-    const data = await response.json();
-    if (response.status === 200) {
-      const restaurantData = JSON.parse(data.body)?.restaurant;
-      if (!restaurantData) {
-        setError("Error: No restaurant data returned from the API.");
-        return;
-      }
 
       setRestaurantName(restaurantData.restaurantName || "");
       sessionStorage.setItem("restaurantName", restaurantData.restaurantName || "");
@@ -141,24 +64,20 @@ const renderRestaurant = async () => {
         : [];
       setClosedDays(closedDaysArray);
 
-      const updatedOpenDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].filter(
-        (day) => !closedDaysArray.includes(day)
-      );
-      setOpenDays(updatedOpenDays);
+        const updatedOpenDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].filter(
+          (day) => !closedDaysArray.includes(day)
+        );
+        setOpenDays(updatedOpenDays);
 
-      setIsActive(!!restaurantData.isActive);
-    } else {
-      setError(data.error || "Error retrieving restaurant details.");
+        setIsActive(!!restaurantData.isActive);
+      } else {
+        setError(data.error || 'Error retrieving restaurant details.');
+      }
+    } catch (error: any) {
+      console.error('Error fetching restaurant details:', error);
+      setError('An unexpected error occurred. Please try again later.');
     }
-  } catch (error) {
-    if (error instanceof Error) {
-        console.error("Error fetching availability:", error.message);
-        // Additional specific error handling logic can go here
-    } else {
-        console.error("An unexpected error occurred:", error);
-    }
-}
-};
+  };
 
   const fetchExistingTables = async () => {
     setError('');
@@ -179,182 +98,72 @@ const renderRestaurant = async () => {
   }
   };
 
-  const addTable = async () => {
+  const addClosedDay = async () => {
+    setIsLoading(true);
     setError('');
-    if (isActive) {
-      setError('Cannot add tables after activation.');
-      return;
-    }
-
-    const tableNumInput = document.getElementById('table_num') as HTMLInputElement;
-    const tableSeatsInput = document.getElementById('table_seats') as HTMLInputElement;
-
-    const tableNum = parseInt(tableNumInput?.value || '', 10);
-    const numSeats = parseInt(tableSeatsInput?.value || '', 10);
-
-    if (!tableNum || !numSeats) {
-      setError('Please enter the number of seats and table number.');
-      return;
-    }
-
-    const tableExists = tables.some((table) => table.tableNum === tableNum);
-    if (tableExists) {
-      setError(`Table number ${tableNum} already exists for this restaurant.`);
-      return;
-    }
 
     try {
-      const response = await fetch('https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/addTable', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          numSeats: numSeats,
-          tableNum: tableNum,
-          restaurantID: restaurantAddress,
-        }),
-      });
+      const response = await fetch(
+        'https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/addCloseDay',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            restaurantClosedID: restaurantAddress,
+            closedDays: selectedDate,
+          }),
+        }
+      );
 
-      const data = await response.json();
+      const result = await response.json();
 
-      if (data.statusCode === 200) {
-        alert('Table added successfully!');
-        fetchExistingTables();
-        if (tableSeatsInput) tableSeatsInput.value = '';
-        if (tableNumInput) tableNumInput.value = '';
+      if (response.ok) {
+        setClosedDays((prev) => [...prev, selectedDate]);
+        alert(result.message || 'Day successfully closed.');
+        setSelectedDate('');
       } else {
-        setError(data.errorMessage || 'An error occurred while adding the table.');
+        setError(result.message || 'Failed to close the day.');
       }
-    } catch (error) {
-      if (error instanceof Error) {
-          console.error("Error fetching availability:", error.message);
-          // Additional specific error handling logic can go here
-      } else {
-          console.error("An unexpected error occurred:", error);
-      }
-  }
+    } catch (err: any) {
+      console.error('Error closing the day:', err);
+      setError('An unexpected error occurred while closing the day.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const removeTable = async (tableNum: number) => {
+  const removeClosedDay = async () => {
+    setIsLoading(true);
     setError('');
-    if (!restaurantAddress || !tableNum) {
-      setError('Invalid request. Restaurant address or Table ID missing.');
-      return;
-    }
-
-    const confirmDelete = window.confirm(`Are you sure you want to remove Table ${tableNum}?`);
-    if (!confirmDelete) return;
 
     try {
-      const response = await fetch('https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/removeTable', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          tableNum: tableNum,
-          restaurantID: restaurantAddress,
-        }),
-      });
+      const response = await fetch(
+        'https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/removeClosedDay',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            restaurantClosedID: restaurantAddress,
+            closedDate: selectedDate,
+          }),
+        }
+      );
 
-      const data = await response.json();
-      if (response.status === 200) {
-        alert(`Table ${tableNum} removed successfully!`);
-        setTables((prev) => prev.filter((table) => table.tableNum !== tableNum));
+      const result = await response.json();
+
+      if (response.ok) {
+        setClosedDays((prev) => prev.filter((day) => day !== selectedDate));
+        alert(result.message || 'Day successfully opened.');
+        setSelectedDate('');
       } else {
-        setError(data.error || `Failed to remove Table ${tableNum}.`);
+        setError(result.message || 'Failed to open the day.');
       }
-    } catch (error) {
-      if (error instanceof Error) {
-          console.error("Error message:", error.message);
-      } 
-  }
-  };
-
-  const saveRestaurant = async () => {
-    setError('');
-    if (!openTime || !closeTime) {
-      setError('Please select both opening and closing times.');
-      return;
+    } catch (err: any) {
+      console.error('Error opening the day:', err);
+      setError('An unexpected error occurred while opening the day.');
+    } finally {
+      setIsLoading(false);
     }
-
-    if (openDays.length === 0) {
-      setError('Please select at least one day the restaurant is open.');
-      return;
-    }
-    if (openTime >= closeTime){
-      setError('your restaurant has to open before it can close lol')
-      return;
-    }
-
-    const allDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-    const closedDays = allDays.filter((day) => !openDays.includes(day)).join(',');
-
-    const storedRestaurantName = typeof window !== 'undefined' ? sessionStorage.getItem('restaurantName') : '';
-
-    try {
-      const response = await fetch('https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/editRestaurant', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          restaurantName: storedRestaurantName,
-          address: restaurantAddress,
-          openTime: openTime,
-          closeTime: closeTime,
-          closedDays: closedDays,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.status === 200) {
-        alert('Restaurant details saved successfully!');
-        renderRestaurant();
-      } else {
-        setError(data.error || 'An error occurred while saving restaurant details.');
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-          console.error("Error message:", error.message);
-      } 
-  }
-  };
-
-  const activateRestaurant = async () => {
-    setError('');
-    if (!restaurantAddress) {
-      setError('Restaurant address is missing. Please log in again.');
-      return;
-    }
-
-    renderRestaurant();
-    if(openTime == "" || closeTime == ""){
-      setError('must have close and open times');
-      return
-    }
-
-   
-
-    const confirmActivate = window.confirm('Are you sure you want to activate this restaurant?');
-    if (!confirmActivate) return;
-
-    try {
-      const response = await fetch('https://x51lo0cnd3.execute-api.us-east-2.amazonaws.com/Stage1/activateRestaurant', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address: restaurantAddress }),
-      });
-
-      const data = await response.json();
-
-      if (response.status === 200) {
-        alert('Restaurant activated successfully!');
-        setIsActive(true);
-      } else {
-        setError(data.error || 'An error occurred while activating the restaurant.');
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-          console.error("Error message:", error.message);
-      } 
-  }
   };
 
   /*const handleDayChange = (day: string) => {
